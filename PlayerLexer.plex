@@ -1,0 +1,243 @@
+<?php
+namespace ThroughBall;
+class PlayerLexer
+{
+    /**
+     * describes how to convert a token into a human-readable element for error messages
+     *
+     * @var array array of token number => textual description of that token
+     */
+    static $humanReadableTokenNames = array(
+        self::INIT => 'init',
+        self::TEAMNAME => 'TeamName',
+        self::OPENPAREN => '(',
+        self::CLOSEPAREN => ')',
+        self::VERSION => 'version',
+        self::GOALIE => 'goalie',
+        self::ERROR => 'error',
+        self::ERRORTYPE => '<error type>',
+        self::SIDE => 'l|r',
+        self::CLANG => 'clang',
+        self::NUMBER => '<number>',
+        self::REALNUMBER => '<real number>',
+        self::VER => 'ver',
+        self::OK => 'ok',
+        self::COMPRESSION => 'compression',
+        self::WARNING => 'warning',
+        self::RECONNECT => 'reconnect',
+        self::SERVERPARAM => 'server_param',
+        self::PLAYERPARAM => 'player_param',
+        self::PLAYERTYPE => 'player_type',
+        self::SENSEBODY => 'sense_body',
+        self::VIEWMODE => 'view_mode',
+        self::HIGHLOW => 'high/low',
+        self::VIEWWIDTH => 'narrow/normal/wide',
+        self::STAMINA => 'stamina',
+        self::SPEED => 'speed',
+        self::HEADANGLE => 'head_angle',
+        self::KICK => 'kick',
+        self::DASH => 'dash',
+        self::TURN => 'turn',
+        self::SAY => 'say',
+        self::TURNNECK => 'turn_neck',
+        self::CATCHBALL => 'catch',
+        self::MOVE => 'move',
+        self::CHANGEVIEW => 'change_view',
+        self::SCORE => 'score',
+        self::AUDIOCUTDIST => 'audio_cut_dist',
+        self::AUTOMODE => 'auto_mode',
+        self::BACKDASHRATE => 'back_dash_rate',
+        
+    );
+    const INIT = 1;
+    const TEAMNAME = 2;
+    const OPENPAREN = 3;
+    const CLOSEPAREN = 4;
+    const VERSION = 5;
+    const GOALIE = 6;
+    const ERROR = 7;
+    const ERRORTYPE = 8;
+    const SIDE = 9;
+    const CLANG = 10;
+    const NUMBER = 11;
+    const REALNUMBER = 12;
+    const VER = 13;
+    const OK = 14;
+    const COMPRESSION = 15;
+    const WARNING = 16;
+    const RECONNECT = 17;
+    const SERVERPARAM = 18;
+    const PLAYERPARAM = 19;
+    const PLAYERTYPE = 20;
+    const SENSEBODY = 21;
+    const VIEWMODE = 22;
+    const HIGHLOW = 23;
+    const VIEWWIDTH = 24;
+    const STAMINA = 25;
+    const SPEED = 26;
+    const HEADANGLE = 27;
+    const KICK = 28;
+    const DASH = 29;
+    const TURN = 30;
+    const SAY = 31;
+    const TURNNECK = 32;
+    const CATCHBALL = 33;
+    const MOVE = 34;
+    const CHANGE_VIEW = 35;
+    const SCORE = 36;
+    const AUDIOCUTDIST = 37;
+    const BACKDASHRATE = 38;
+
+    private $input;
+    public $N;
+    public $token;
+    public $value;
+    public $line;
+    public $debug = false;
+    public $logger;
+    private $_string = '';
+
+    function __construct($data, Logger $log = null)
+    {
+        $this->input = str_replace("\r\n", "\n", $data);
+        $this->N = 0;
+        if (null !== $log) {
+            $this->debug = true;
+            $this->logger = $log;
+        }
+    }
+
+    /**
+     * @param array $tokens an associative array mapping token names to something else
+     * @return string a comma-delimited list of human-readable names of the tokens
+     */
+    function getHumanReadableNames(array $tokens)
+    {
+        $ret = '';
+        foreach ($tokens as $token => $handler) {
+            if ($ret) {
+                $ret .= ', ';
+            }
+            $ret .= self::$humanReadableTokenNames[$token];
+        }
+        return $ret; 
+    }
+
+    function debug()
+    {
+        $this->debug = true;
+        $this->logger = new DebugEchoLogger;
+    }
+
+/*!lex2php
+%input $this->input
+%counter $this->N
+%token $this->token
+%value $this->value
+%line $this->line
+
+TEAMNAME = /[-_a-zA-Z0-9]+/
+WHITESPACE = /\s+/
+ERROR = "error"
+ERRORTYPE = [a-zA-Z_]+
+SIDE = /l|r/
+NUMBER = /[0-9]+/
+REALNUMBER = /[0-9]+\.[0-9]+/
+HIGHLOW = /high|low/
+VIEWWIDTH = /narrow|normal|wide/
+
+*/
+/*!lex2php
+%statename YYINITIAL
+
+"(" {
+    if ($this->debug) $this->logger->log("parenthesis [" . $this->value . "]");
+    $this->yypushstate(self::INTAG);
+    $this->token = self::OPENPAREN;
+}
+
+WHITESPACE {
+    if ($this->debug) $this->logger->log("whitespace [" . $this->value . "]");
+}
+*/
+/*!lex2php
+%statename INTAG
+
+"(" {
+    if ($this->debug) $this->logger->log("parenthesis [" . $this->value . "]");
+    $this->yypushstate(self::INTAG);
+    $this->token = self::OPENPAREN;
+}
+
+")" {
+    if ($this->debug) $this->logger->log("parenthesis [" . $this->value . "]");
+    $this->token = self::CLOSEPAREN;
+    $this->yypopstate();
+}
+
+"init" {
+    if ($this->debug) $this->logger->log("init [" . $this->value . "]");
+    $this->token = self::INIT;
+}
+
+"reconnect" {
+    if ($this->debug) $this->logger->log("reconnect [" . $this->value . "]");
+    $this->token = self::RECONNECT;
+}
+
+"goalie" {
+    if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
+    $this->token = self::GOALIE;
+}
+
+"version" {
+    if ($this->debug) $this->logger->log("version [" . $this->value . "]");
+    $this->token = self::VERSION;
+}
+
+"clang" {
+    if ($this->debug) $this->logger->log("clang [" . $this->value . "]");
+    $this->token = self::CLANG;
+}
+
+"goalie" {
+    if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
+    $this->token = self::GOALIE;
+}
+
+"error" {
+    if ($this->debug) $this->logger->log("error [" . $this->value . "]");
+    $this->yypushstate(self::INERROR);
+    $this->token = self::ERROR;
+}
+
+"warning" {
+    if ($this->debug) $this->logger->log("warning [" . $this->value . "]");
+    $this->yypushstate(self::INERROR);
+    $this->token = self::WARNING;
+}
+
+WHITESPACE {
+    if ($this->debug) $this->logger->log("whitespace [" . $this->value . "]");
+    return false;
+}
+
+TEAMNAME {
+    if ($this->debug) $this->logger->log("team name [" . $this->value . "]");
+    $this->token = self::TEAMNAME;
+}
+*/
+/*lex2php
+%statename INERROR
+ERRORTYPE {
+    if ($this->debug) $this->logger->log("error type [" . $this->value . "]");
+    $this->token = self::ERRORTYPE;
+}
+
+")" {
+    if ($this->debug) $this->logger->log("parenthesis [" . $this->value . "]");
+    $this->token = self::CLOSEPAREN;
+    $this->yypopstate();
+}
+*/
+}
