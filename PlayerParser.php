@@ -129,10 +129,10 @@ class PlayerParser
         ),
         'simpleparam' => array(
             'knowntokens' => array(
-                a::NUMBER => 'handleNumber',
-                a::REALNUMBER => 'handleNumber',
-                a::QUOTEDSTRING => 'handleString',
-                a::CLOSEPAREN => 'handleEndSimpleTag'
+                a::NUMBER => 'handleSimpleParam',
+                a::REALNUMBER => 'handleSimpleParam',
+                a::QUOTEDSTRING => 'handleSimpleParam',
+                a::CLOSEPAREN => 'handleSimpleParam'
             )
         )
     );
@@ -163,22 +163,16 @@ class PlayerParser
         $this->pushstate('simpleparam');
     }
 
-    function handleParamValue()
+    function handleSimpleParam()
     {
-        if ($this->token() == a::EQUALS) {
-            $this->tokenindex--;
-            $this->pushstate('inparamvalue');
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to serverparams
+            $this->stack(-1)->addParam($this->stack());
+            $this->tokenindex--; // pop the param
             return;
         }
-        if ($this->token() == a::QUOTEDSTRING) {
-            $this->stack(-1)->value = $this->value();
-        } else {
-            $this->stack(-1)->value = new TemplateParser\Template\Variable($this->value());
-        }
+        $this->stack(-1)->value = $this->value();
         $this->tokenindex--; // pop the param value
-        $this->popstate(); // return to inparamlist
-        $this->stack(-1)->addParam($this->stack());
-        $this->tokenindex--; // pop the param
     }
 
     function handleEndParamList()
