@@ -164,11 +164,6 @@ WHITESPACE {
     $this->token = self::RECONNECT;
 }
 
-"goalie" {
-    if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
-    $this->token = self::GOALIE;
-}
-
 "version" {
     if ($this->debug) $this->logger->log("version [" . $this->value . "]");
     $this->token = self::VERSION;
@@ -180,9 +175,10 @@ WHITESPACE {
     $this->N--;
 }
 
-"goalie" {
+"goalie " {
     if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
     $this->token = self::GOALIE;
+    $this->N--;
 }
 
 "error" {

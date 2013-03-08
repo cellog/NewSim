@@ -263,12 +263,11 @@ class PlayerLexer
               13 => 0,
               14 => 0,
               15 => 0,
-              16 => 0,
             );
         if ($this->N >= strlen($this->input)) {
             return false; // end of input
         }
-        $yy_global_pattern = '/\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(goalie)|\G(version)|\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)/';
+        $yy_global_pattern = '/\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)/';
 
         do {
             if (preg_match($yy_global_pattern,$this->input, $yymatches, null, $this->N)) {
@@ -309,22 +308,21 @@ class PlayerLexer
                     continue;
                 } else {
                     $yy_yymore_patterns = array(
-        1 => array(0, "\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(goalie)|\G(version)|\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        2 => array(0, "\G(init)|\G(\")|\G(reconnect)|\G(goalie)|\G(version)|\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        3 => array(0, "\G(\")|\G(reconnect)|\G(goalie)|\G(version)|\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        4 => array(0, "\G(reconnect)|\G(goalie)|\G(version)|\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        5 => array(0, "\G(goalie)|\G(version)|\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        6 => array(0, "\G(version)|\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        7 => array(0, "\G(clang )|\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        8 => array(0, "\G(goalie)|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        9 => array(0, "\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        10 => array(0, "\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        11 => array(0, "\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        12 => array(0, "\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        13 => array(0, "\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        14 => array(0, "\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        15 => array(0, "\G([\-_a-zA-Z0-9]+)"),
-        16 => array(0, ""),
+        1 => array(0, "\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        2 => array(0, "\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        3 => array(0, "\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        4 => array(0, "\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        5 => array(0, "\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        6 => array(0, "\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        7 => array(0, "\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        8 => array(0, "\G(error)|\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        9 => array(0, "\G(warning)|\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        10 => array(0, "\G(server_param)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        11 => array(0, "\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        12 => array(0, "\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        13 => array(0, "\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        14 => array(0, "\G([\-_a-zA-Z0-9]+)"),
+        15 => array(0, ""),
     );
 
                     // yymore is needed
@@ -419,67 +417,62 @@ class PlayerLexer
     function yy_r2_6($yy_subpatterns)
     {
 
-    if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
-    $this->token = self::GOALIE;
-    }
-    function yy_r2_7($yy_subpatterns)
-    {
-
     if ($this->debug) $this->logger->log("version [" . $this->value . "]");
     $this->token = self::VERSION;
     }
-    function yy_r2_8($yy_subpatterns)
+    function yy_r2_7($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("clang [" . $this->value . "]");
     $this->token = self::CLANG;
     $this->N--;
     }
-    function yy_r2_9($yy_subpatterns)
+    function yy_r2_8($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
     $this->token = self::GOALIE;
+    $this->N--;
     }
-    function yy_r2_10($yy_subpatterns)
+    function yy_r2_9($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("error [" . $this->value . "]");
     $this->yypushstate(self::INERROR);
     $this->token = self::ERROR;
     }
-    function yy_r2_11($yy_subpatterns)
+    function yy_r2_10($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("warning [" . $this->value . "]");
     $this->yypushstate(self::INERROR);
     $this->token = self::WARNING;
     }
-    function yy_r2_12($yy_subpatterns)
+    function yy_r2_11($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("server_param [" . $this->value . "]");
     $this->token = self::SERVERPARAM;
     }
-    function yy_r2_13($yy_subpatterns)
+    function yy_r2_12($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("whitespace [" . $this->value . "]");
     return false;
     }
-    function yy_r2_14($yy_subpatterns)
+    function yy_r2_13($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("real number [" . $this->value . "]");
     $this->token = self::REALNUMBER;
     }
-    function yy_r2_15($yy_subpatterns)
+    function yy_r2_14($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("number [" . $this->value . "]");
     $this->token = self::NUMBER;
     }
-    function yy_r2_16($yy_subpatterns)
+    function yy_r2_15($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("identifier [" . $this->value . "]");
