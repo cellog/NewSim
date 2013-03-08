@@ -45,7 +45,7 @@ class PlayerParser
             if (isset($this->stateInformation[$this->state]['knowntokens'][$this->lex->token])) {
                 $this->tokenindex++;
                 $this->tokenstack[$this->tokenindex] = array('token' => $this->lex->token, 'value' => $this->lex->value);
-                $this->{$this->stateInformation[$this->state]['knowntokens'][$this->lex->token]}();
+                while ($this->{$this->stateInformation[$this->state]['knowntokens'][$this->lex->token]}());
             } else {
                 // unexpected token
                 throw new ParseException("Unexpected token: [" . $this->lex->value . "], expected one of: " .
@@ -89,7 +89,10 @@ class PlayerParser
         } else {
             $index += $this->tokenindex;
         }
-        return $this->tokenstack[$index]['value'];
+        if (is_array($this->tokenstack[$index])) {
+            return $this->tokenstack[$index]['value'];
+        }
+        return $this->tokenstack[$index];
     }
 
     function token($index = null)
@@ -100,6 +103,12 @@ class PlayerParser
             $index += $this->tokenindex;
         }
         return $this->tokenstack[$index]['token'];
+    }
+
+    function replaceToken($newindex)
+    {
+        $newindex += $this->tokenindex;
+        $this->tokenstack[$this->tokenindex] = $this->tokenstack[$newindex];
     }
 
     function replace($newvalue)
@@ -116,16 +125,19 @@ class PlayerParser
         'tag' => array(
             'knowntokens' => array(
                 a::SERVERPARAM => 'handleServerParam',
+                a::CLOSEPAREN => 'handleTagClose'
             ),
         ),
         'server_param' => array(
             'knowntokens' => array(
-                a::OPENPAREN => 'handleSimpleTag',
+                a::OPENPAREN => 'handleServerParam',
+                a::CLOSEPAREN => 'handleServerParam'
             )
         ),
         'simpletag' => array(
             'knowntokens' => array(
-                a::IDENTIFIER => 'handleIdentifier',
+                a::IDENTIFIER => 'handleSimpleTag',
+                a::CLOSEPAREN => 'handleSimpleTag'
             )
         ),
         'simpleparam' => array(
@@ -144,6 +156,13 @@ class PlayerParser
         $this->tokenindex--; // throw away the token
     }
 
+    function handleTagClose()
+    {
+        $this->popstate();
+        $this->tokenindex--;
+        return;
+    }
+
     function handleServerParam()
     {
         if ($this->token() == a::OPENPAREN) {
@@ -151,16 +170,27 @@ class PlayerParser
             $this->pushstate('simpletag');
             return;
         }
+        if ($this->token() == a::CLOSEPAREN) {
+            if ($this->value(-1) instanceof namespace\Param) {
+                $this->stack(-2)->addParam($this->stack(-1));
+                $this->tokenindex -= 2; // pop the parenthesis and the tag
+            }
+            $this->popstate(); // return to previous state
+            return;
+        }
         $param = new namespace\ServerParams;
         $this->replace($param);
-        $this->tokenindex--; // throw away the token
         $this->pushstate('server_param');
     }
 
     function handleSimpleTag()
     {
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to previous state
+            return true; // don't retrieve a new token yet
+        }
         $param = new namespace\Param;
-        $param->name = $this->value();
+        $param->setName($this->value());
         $this->replace($param);
         $this->pushstate('simpleparam');
     }
@@ -168,12 +198,10 @@ class PlayerParser
     function handleSimpleParam()
     {
         if ($this->token() == a::CLOSEPAREN) {
-            $this->popstate(); // return to serverparams
-            $this->stack(-1)->addParam($this->stack());
-            $this->tokenindex--; // pop the param
-            return;
+            $this->popstate(); // return to simpletag
+            return true; // don't retrieve a new token yet
         }
-        $this->stack(-1)->value = $this->value();
+        $this->stack(-1)->setValue($this->value());
         $this->tokenindex--; // pop the param value
     }
 

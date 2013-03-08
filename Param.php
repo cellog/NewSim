@@ -13,4 +13,14 @@ class Param {
     {
         $this->value = $value;
     }
+
+    function getName()
+    {
+        return $this->name;
+    }
+
+    function getValue()
+    {
+        return $this->value;
+    }
 }
