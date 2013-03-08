@@ -1,6 +1,8 @@
 <?php
 namespace ThroughBall;
 include __DIR__ . '/PlayerLexer.php';
+include __DIR__ . '/ServerParams.php';
+include __DIR__ . '/Param.php';
 use ThroughBall\PlayerLexer as a;
 class ParseException extends \Exception {}
 class PlayerParser
@@ -9,7 +11,7 @@ class PlayerParser
     protected $state;
     protected $statestack = array();
     protected $tokenstack = array();
-    protected $tokenindex = 0;
+    protected $tokenindex = -1;
     protected $return;
     protected $lex;
 
@@ -22,10 +24,9 @@ class PlayerParser
     {
         $this->statestack = array();
         $this->state = "initial";
-        $return = new TemplateParser\Template;
         $this->lex = $lex;
         $this->lex->N = 0;
-        $this->tokenstack[0] = $return;
+        $this->tokenindex = -1;
     }
 
     /**
@@ -153,11 +154,12 @@ class PlayerParser
         $param = new namespace\ServerParams;
         $this->replace($param);
         $this->tokenindex--; // throw away the token
+        $this->pushstate('server_param');
     }
 
     function handleSimpleTag()
     {
-        $param = new namespace\SimpleParam;
+        $param = new namespace\Param;
         $param->name = $this->value();
         $this->replace($param);
         $this->pushstate('simpleparam');
@@ -186,9 +188,9 @@ class PlayerParser
         $this->popstate();
     }
 }
-$lex = new TemplateLexer("hi there this is my { text}{% include test fee=\"hi\" foe=fum%}");
-$lex->debug();
-$parser = new TemplateParser();
+$lex = new PlayerLexer("(server_param (audio_cut_dist 50))", new Logger);
+$lex->debug = true;
+$parser = new PlayerParser();
 $parser->setup($lex);
 $ret = $parser->parse();
 var_dump($ret);

@@ -81,7 +81,7 @@ class PlayerLexer
     function getHumanReadableNames(array $tokens)
     {
         $ret = '';
-        foreach ($tokens as $token => $handler) {
+        foreach ($tokens as $token) {
             if ($ret) {
                 $ret .= ', ';
             }
