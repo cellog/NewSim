@@ -132,6 +132,9 @@ class PlayerParser
             'knowntokens' => array(
                 a::OPENPAREN => 'handleServerParam',
                 a::CLOSEPAREN => 'handleServerParam'
+            ),
+            'reduce' => array(
+                'simpletag' => 'reduceSimpleTag'
             )
         ),
         'simpletag' => array(
@@ -171,10 +174,6 @@ class PlayerParser
             return;
         }
         if ($this->token() == a::CLOSEPAREN) {
-            if ($this->value(-1) instanceof namespace\Param) {
-                $this->stack(-2)->addParam($this->stack(-1));
-                $this->tokenindex -= 2; // pop the parenthesis and the tag
-            }
             $this->popstate(); // return to previous state
             return;
         }
@@ -183,11 +182,18 @@ class PlayerParser
         $this->pushstate('server_param');
     }
 
+    function reduceSimpleTag()
+    {
+        $this->stack(-1)->addParam($this->stack());
+        $this->tokenindex--;
+    }
+
     function handleSimpleTag()
     {
         if ($this->token() == a::CLOSEPAREN) {
-            $this->popstate(); // return to previous state
-            return true; // don't retrieve a new token yet
+            $this->tokenindex--; // discard the close parenthesis
+            $this->popstate(); // add the simple tag to its parent
+            return;
         }
         $param = new namespace\Param;
         $param->setName($this->value());
@@ -216,7 +222,7 @@ class PlayerParser
         $this->popstate();
     }
 }
-$lex = new PlayerLexer("(server_param (audio_cut_dist 50))", new Logger);
+$lex = new PlayerLexer('(server_param (audio_cut_dist 50)(auto_mode 0)(back_dash_rate 0.6)(back_passes 1)(ball_accel_max 2.7)(ball_decay 0.94)(ball_rand 0.05)(ball_size 0.085)(ball_speed_max 3)(ball_stuck_area 3)(ball_weight 0.2)(catch_ban_cycle 5)(catch_probability 1)(catchable_area_l 1.2)(catchable_area_w 1)(ckick_margin 1)(clang_advice_win 1)(clang_define_win 1)(clang_del_win 1)(clang_info_win 1)(clang_mess_delay 50)(clang_mess_per_cycle 1)(clang_meta_win 1)(clang_rule_win 1)(clang_win_size 300)(coach 0)(coach_msg_file "")(coach_port 6001)(coach_w_referee 0)(connect_wait 300)(control_radius 2)(dash_angle_step 45)(dash_power_rate 0.006)(drop_ball_time 100)(effort_dec 0.005)(effort_dec_thr 0.3)(effort_inc 0.01)(effort_inc_thr 0.6)(effort_init 1)(effort_min 0.6)(extra_half_time 100)(extra_stamina 50)(forbid_kick_off_offside 1)(foul_cycles 5)(foul_detect_probability 0.5)(foul_exponent 10)(free_kick_faults 1)(freeform_send_period 20)(freeform_wait_period 600)(fullstate_l 0)(fullstate_r 0)(game_log_compression 0)(game_log_dated 1)(game_log_dir "./")', new Logger);
 $lex->debug = true;
 $parser = new PlayerParser();
 $parser->setup($lex);
