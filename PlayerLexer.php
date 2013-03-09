@@ -30,6 +30,7 @@ class PlayerLexer
         self::VIEWWIDTH => 'narrow/normal/wide',
         self::QUOTEDSTRING => '<string>',
         self::GOALIE => 'goalie',
+        self::SEE => 'see',
     );
 
     const INIT = 1;
@@ -54,6 +55,7 @@ class PlayerLexer
     const VIEWWIDTH = 20;
     const QUOTEDSTRING = 21;
     const GOALIE = 22;
+    const SEE = 23;
 
     private $input;
     public $N;
@@ -266,11 +268,13 @@ class PlayerLexer
               15 => 0,
               16 => 0,
               17 => 0,
+              18 => 0,
+              19 => 0,
             );
         if ($this->N >= strlen($this->input)) {
             return false; // end of input
         }
-        $yy_global_pattern = '/\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)/';
+        $yy_global_pattern = '/\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)/';
 
         do {
             if (preg_match($yy_global_pattern,$this->input, $yymatches, null, $this->N)) {
@@ -311,23 +315,25 @@ class PlayerLexer
                     continue;
                 } else {
                     $yy_yymore_patterns = array(
-        1 => array(0, "\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        2 => array(0, "\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        3 => array(0, "\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        4 => array(0, "\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        5 => array(0, "\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        6 => array(0, "\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        7 => array(0, "\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        8 => array(0, "\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        9 => array(0, "\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        10 => array(0, "\G(server_param)|\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        11 => array(0, "\G(player_param)|\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        12 => array(0, "\G(player_type)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        13 => array(0, "\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        14 => array(0, "\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        15 => array(0, "\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        16 => array(0, "\G([\-_a-zA-Z0-9]+)"),
-        17 => array(0, ""),
+        1 => array(0, "\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        2 => array(0, "\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        3 => array(0, "\G(\")|\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        4 => array(0, "\G(reconnect)|\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        5 => array(0, "\G(version)|\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        6 => array(0, "\G(clang )|\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        7 => array(0, "\G(goalie )|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        8 => array(0, "\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        9 => array(0, "\G(warning)|\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        10 => array(0, "\G(server_param)|\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        11 => array(0, "\G(player_param)|\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        12 => array(0, "\G(player_type)|\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        13 => array(0, "\G(see)|\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        14 => array(0, "\G(sense_body)|\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        15 => array(0, "\G(\\s+|\r|\n)|\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        16 => array(0, "\G(-?[0-9]+\\.[0-9]+)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        17 => array(0, "\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        18 => array(0, "\G([\-_a-zA-Z0-9]+)"),
+        19 => array(0, ""),
     );
 
                     // yymore is needed
@@ -474,22 +480,34 @@ class PlayerLexer
     function yy_r2_14($yy_subpatterns)
     {
 
+    if ($this->debug) $this->logger->log("see [" . $this->value . "]");
+    $this->token = self::SEE;
+    }
+    function yy_r2_15($yy_subpatterns)
+    {
+
+    if ($this->debug) $this->logger->log("sense_body [" . $this->value . "]");
+    $this->token = self::SENSEBODY;
+    }
+    function yy_r2_16($yy_subpatterns)
+    {
+
     if ($this->debug) $this->logger->log("whitespace [" . $this->value . "]");
     return false;
     }
-    function yy_r2_15($yy_subpatterns)
+    function yy_r2_17($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("real number [" . $this->value . "]");
     $this->token = self::REALNUMBER;
     }
-    function yy_r2_16($yy_subpatterns)
+    function yy_r2_18($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("number [" . $this->value . "]");
     $this->token = self::NUMBER;
     }
-    function yy_r2_17($yy_subpatterns)
+    function yy_r2_19($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("identifier [" . $this->value . "]");

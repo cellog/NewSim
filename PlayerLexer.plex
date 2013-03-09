@@ -30,6 +30,7 @@ class PlayerLexer
         self::VIEWWIDTH => 'narrow/normal/wide',
         self::QUOTEDSTRING => '<string>',
         self::GOALIE => 'goalie',
+        self::SEE => 'see',
     );
 
     const INIT = 1;
@@ -54,6 +55,7 @@ class PlayerLexer
     const VIEWWIDTH = 20;
     const QUOTEDSTRING = 21;
     const GOALIE = 22;
+    const SEE = 23;
 
     private $input;
     public $N;
@@ -207,6 +209,16 @@ WHITESPACE {
 "player_type" {
     if ($this->debug) $this->logger->log("player_type [" . $this->value . "]");
     $this->token = self::PLAYERTYPE;
+}
+
+"see" {
+    if ($this->debug) $this->logger->log("see [" . $this->value . "]");
+    $this->token = self::SEE;
+}
+
+"sense_body" {
+    if ($this->debug) $this->logger->log("sense_body [" . $this->value . "]");
+    $this->token = self::SENSEBODY;
 }
 
 WHITESPACE {
