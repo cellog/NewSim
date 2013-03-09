@@ -4,7 +4,7 @@ class PlayerType {
     protected $info = array();
     function addParam($param)
     {
-        $this->params[$param->getName()] = $param->getValue();
+        $this->info[$param->getName()] = $param->getValue();
     }
 
     function getId()

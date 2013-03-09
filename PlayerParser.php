@@ -131,9 +131,6 @@ class PlayerParser
             'knowntokens' => array(
                 a::OPENPAREN => 'handleTagOpen',
             ),
-            'reduce' => array(
-                'player_type' => 'reducePlayerType'
-            )
         ),
         'tag' => array(
             'knowntokens' => array(
@@ -142,6 +139,9 @@ class PlayerParser
                 a::PLAYERTYPE => 'handlePlayerType',
                 a::CLOSEPAREN => 'handleTagClose'
             ),
+            'reduce' => array(
+                'player_type' => 'reducePlayerType'
+            )
         ),
         'server_param' => array(
             'knowntokens' => array(
@@ -242,12 +242,13 @@ class PlayerParser
             return;
         }
         if ($this->token() == a::CLOSEPAREN) {
+            $this->tokenindex--; // discard closing parenthesis
             $this->popstate(); // return to previous state
-            return;
+            return true; // let the tag handler close itself
         }
         $param = new namespace\PlayerType;
         $this->replace($param);
-        $this->pushstate('player_param');
+        $this->pushstate('player_type');
     }
 
     function handleSimpleTag()
@@ -287,7 +288,7 @@ class PlayerParser
     function reducePlayerType()
     {
         $this->playertypes->addPlayerType($this->stack());
-        $this->tokenindex--;
+        $this->replace($this->stack(1)); // replace with closing parenthesis
     }
 }
 $lex = new PlayerLexer('(player_type (id 1)(player_speed_max 1.05)(stamina_inc_max 50.5118)(player_decay 0.357182)(inertia_moment 3.92956)(dash_power_rate 0.00508136)(player_size 0.3)(kickable_margin 0.602344)(kick_rand 0.00234432)(extra_stamina 60.5673)(effort_max 0.957731)(effort_min 0.557731)(kick_power_rate 0.027)(foul_detect_probability 0.5)(catchable_area_l_stretch 1.1378))
@@ -311,4 +312,4 @@ $lex->debug = true;
 $parser = new PlayerParser();
 $parser->setup($lex);
 $ret = $parser->parse();
-var_dump($ret);
+var_dump($parser->getPlayerTypes());
