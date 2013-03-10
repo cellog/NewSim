@@ -31,6 +31,7 @@ class PlayerLexer
         self::QUOTEDSTRING => '<string>',
         self::GOALIE => 'goalie',
         self::SEE => 'see',
+        self::BALL => '< ball (b)>', // ball inside view cone
         self::UNCLEARBALL => '<unclear ball (B)>', // ball near but outside view cone
         self::UNCLEARFLAG => '<unclear flag (B)>',
         self::UNCLEARPLAYER => '<unclear player (P)>',
@@ -83,9 +84,9 @@ class PlayerLexer
 	self::VIRTUALFLAGRT30 => 'virtual flag right top 30 (f r t 30)',
 	self::VIRTUALFLAGRT20 => 'virtual flag right top 20 (f r t 20)',
 	self::VIRTUALFLAGRT10 => 'virtual flag right top 10 (f r t 10)',
-	self::VIRTUALFLAGRT10 => 'virtual flag right bottom 10 (f l t 10)',
-	self::VIRTUALFLAGRT20 => 'virtual flag right bottom 20 (f l t 20)',
-	self::VIRTUALFLAGRT30 => 'virtual flag right bottom 30 (f l t 30)',
+	self::VIRTUALFLAGRB10 => 'virtual flag right bottom 10 (f l t 10)',
+	self::VIRTUALFLAGRB20 => 'virtual flag right bottom 20 (f l t 20)',
+	self::VIRTUALFLAGRB30 => 'virtual flag right bottom 30 (f l t 30)',
 
 	self::VIRTUALFLAGTL50 => 'virtual flag top left 50 (f t l 50)',
 	self::VIRTUALFLAGTL40 => 'virtual flag top left 40 (f t l 40)',
@@ -192,6 +193,7 @@ class PlayerLexer
     const PENALTYRIGHTCENTER = 85;
     const PENALTYRIGHTBOTTOM = 86;
     const PLAYER = 87;
+    const BALL = 88;
 
     private $input;
     public $N;
@@ -277,6 +279,11 @@ WHITESPACE {
 "(B)" {
     if ($this->debug) $this->logger->log("unclear ball [" . $this->value . "]");
     $this->token = self::UNCLEARBALL;
+}
+
+"(b)" {
+    if ($this->debug) $this->logger->log("ball [" . $this->value . "]");
+    $this->token = self::BALL;
 }
 
 "(P)" {
@@ -519,6 +526,12 @@ FLAG {
 }
 
 "goalie " {
+    if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
+    $this->token = self::GOALIE;
+    $this->N--;
+}
+
+"goalie)" {
     if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
     $this->token = self::GOALIE;
     $this->N--;

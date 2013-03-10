@@ -6,6 +6,9 @@ include __DIR__ . '/PlayerParams.php';
 include __DIR__ . '/PlayerTypes.php';
 include __DIR__ . '/PlayerType.php';
 include __DIR__ . '/Param.php';
+include __DIR__ . '/See.php';
+include __DIR__ . '/Item.php';
+include __DIR__ . '/SeenPlayer.php';
 use ThroughBall\PlayerLexer as a;
 class ParseException extends \Exception {}
 class PlayerParser
@@ -58,7 +61,7 @@ class PlayerParser
                 while ($this->{$this->stateInformation[$this->state]['knowntokens'][$this->lex->token]}());
             } else {
                 // unexpected token
-                throw new ParseException("Unexpected token: [" . $this->lex->value . "], expected one of: " .
+                throw new ParseException("In state " . $this->state . ", unexpected token: [" . $this->lex->value . "], expected one of: " .
                                          $this->lex->getHumanReadableNames(array_keys(
                                             $this->stateInformation[$this->state]['knowntokens'])));
             }
@@ -168,14 +171,16 @@ class PlayerParser
         'see' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleSee',
+                a::NUMBER => 'handleSee',
                 a::CLOSEPAREN => 'handleSee'
             ),
             'reduce' => array(
-                'seeitem' => 'reduceSeenItem',
+                'seeitem' => 'reduceSeeItem',
             )
         ),
         'seeitem' => array(
             'knowntokens' => array(
+                a::BALL => 'handleSeeItem',
                 a::UNCLEARBALL => 'handleSeeItem',
                 a::UNCLEARFLAG => 'handleSeeItem',
                 a::UNCLEARPLAYER => 'handleSeeItem',
@@ -183,7 +188,81 @@ class PlayerParser
                 a::GOALL => 'handleSeeItem',
                 a::GOALR => 'handleSeeItem',
                 a::CENTERFLAG => 'handleSeeItem',
-                a::CLOSEPAREN => 'handleSeeItem'
+                a::LEFTTOPFLAG => 'handleSeeItem',
+                a::CENTERTOPFLAG => 'handleSeeItem',
+                a::RIGHTTOPFLAG => 'handleSeeItem',
+                a::LEFTBOTTOMFLAG => 'handleSeeItem',
+                a::CENTERBOTTOMFLAG => 'handleSeeItem',
+                a::RIGHTBOTTOMFLAG => 'handleSeeItem',
+                a::PENALTYLEFTTOP => 'handleSeeItem',
+                a::PENALTYLEFTCENTER => 'handleSeeItem',
+                a::PENALTYLEFTBOTTOM => 'handleSeeItem',
+                a::PENALTYRIGHTTOP => 'handleSeeItem',
+                a::PENALTYRIGHTCENTER => 'handleSeeItem',
+                a::PENALTYRIGHTBOTTOM => 'handleSeeItem',
+                a::GOALLEFTTOP => 'handleSeeItem',
+                a::GOALLEFTBOTTOM => 'handleSeeItem',
+                a::GOALRIGHTTOP => 'handleSeeItem',
+                a::GOALRIGHTBOTTOM => 'handleSeeItem',
+                a::LINERIGHT => 'handleSeeItem',
+                a::LINETOP => 'handleSeeItem',
+                a::LINELEFT => 'handleSeeItem',
+                a::LINEBOTTOM => 'handleSeeItem',
+                a::FLAGRIGHT => 'handleSeeItem',
+                a::FLAGTOP => 'handleSeeItem',
+                a::FLAGLEFT => 'handleSeeItem',
+                a::FLAGBOTTOM => 'handleSeeItem',
+                a::VIRTUALFLAGLT30 => 'handleSeeItem',
+                a::VIRTUALFLAGLT20 => 'handleSeeItem',
+                a::VIRTUALFLAGLT10 => 'handleSeeItem',
+                a::VIRTUALFLAGLB10 => 'handleSeeItem',
+                a::VIRTUALFLAGLB20 => 'handleSeeItem',
+                a::VIRTUALFLAGLB30 => 'handleSeeItem',
+        
+                a::VIRTUALFLAGBL50 => 'handleSeeItem',
+                a::VIRTUALFLAGBL40 => 'handleSeeItem',
+                a::VIRTUALFLAGBL30 => 'handleSeeItem',
+                a::VIRTUALFLAGBL20 => 'handleSeeItem',
+                a::VIRTUALFLAGBL10 => 'handleSeeItem',
+                a::VIRTUALFLAGBR10 => 'handleSeeItem',
+                a::VIRTUALFLAGBR20 => 'handleSeeItem',
+                a::VIRTUALFLAGBR30 => 'handleSeeItem',
+                a::VIRTUALFLAGBR40 => 'handleSeeItem',
+                a::VIRTUALFLAGBR50 => 'handleSeeItem',
+        
+                a::VIRTUALFLAGRT30 => 'handleSeeItem',
+                a::VIRTUALFLAGRT20 => 'handleSeeItem',
+                a::VIRTUALFLAGRT10 => 'handleSeeItem',
+                a::VIRTUALFLAGRB10 => 'handleSeeItem',
+                a::VIRTUALFLAGRB20 => 'handleSeeItem',
+                a::VIRTUALFLAGRB30 => 'handleSeeItem',
+        
+                a::VIRTUALFLAGTL50 => 'handleSeeItem',
+                a::VIRTUALFLAGTL40 => 'handleSeeItem',
+                a::VIRTUALFLAGTL30 => 'handleSeeItem',
+                a::VIRTUALFLAGTL20 => 'handleSeeItem',
+                a::VIRTUALFLAGTL10 => 'handleSeeItem',
+                a::VIRTUALFLAGTR10 => 'handleSeeItem',
+                a::VIRTUALFLAGTR20 => 'handleSeeItem',
+                a::VIRTUALFLAGTR30 => 'handleSeeItem',
+                a::VIRTUALFLAGTR40 => 'handleSeeItem',
+                a::VIRTUALFLAGTR50 => 'handleSeeItem',
+
+                a::NUMBER => 'handleSeeItem',
+                a::REALNUMBER => 'handleSeeItem',
+                a::QUOTEDSTRING => 'handleSeeItem',
+                a::CLOSEPAREN => 'handleSeeItem',
+
+                a::OPENPAREN => 'handlePlayer'
+            )
+        ),
+        'player' => array(
+            'knowntokens' => array(
+                a::PLAYER => 'handlePlayer',
+                a::QUOTEDSTRING => 'handlePlayer',
+                a::NUMBER => 'handlePlayer',
+                a::GOALIE => 'handlePlayer',
+                a::CLOSEPAREN => 'handlePlayer'
             )
         ),
         'player_param' => array(
@@ -306,6 +385,75 @@ class PlayerParser
         }
     }
 
+    function handleSee()
+    {
+        if ($this->token() == a::OPENPAREN) {
+            $this->tokenindex--;
+            $this->pushstate('seeitem');
+            return;
+        }
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to previous state
+            return true; // handle this in the parent
+        }
+        if ($this->token() == a::SEE) {
+            $this->replace(new namespace\See);
+            $this->pushstate('see');
+            return;
+        }
+        // we were passed the simulator time
+        $this->stack(-1)->setTime($this->value());
+        $this->tokenindex--; // discard the token
+    }
+
+    function handleSeeItem()
+    {
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to previous state
+            return;
+        }
+        $a = $this->token();
+        if ($a == a::QUOTEDSTRING || $a == a::NUMBER || $a == a::REALNUMBER) {
+            $this->stack(-1)->setValue($this->value());
+            $this->tokenindex--;
+            return;
+        }
+        $value = $this->value();
+        $this->replace(new namespace\Item);
+        $this->stack()->setName($value);
+    }
+
+    function handlePlayer()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            $this->tokenindex--; // discard
+            return;
+        }
+        if ($a == a::QUOTEDSTRING) {
+            $this->stack(-1)->setTeam($this->value());
+            $this->tokenindex--;
+            return;
+        }
+        if ($a == a::NUMBER) {
+            $this->stack(-1)->setUnum($this->value());
+            $this->tokenindex--;
+            return;
+        }
+        if ($a == a::GOALIE) {
+            $this->stack(-1)->setIsgoalie();
+            $this->tokenindex--;
+            return;
+        }
+        if ($a == a::OPENPAREN) {
+            $this->tokenindex--; // discard
+            $this->pushstate('player');
+            return;
+        }
+        $this->replace(new namespace\SeenPlayer);
+    }
+
     function reduceSimpleTag()
     {
         $this->stack(-1)->addParam($this->stack());
@@ -324,10 +472,16 @@ class PlayerParser
         $this->playertypes->addPlayerType($this->stack());
         $this->replace($this->stack(1)); // replace with closing parenthesis
     }
+
+    function reduceSeeItem()
+    {
+        $this->stack(-2)->addItem($this->stack(-1));
+        $this->tokenindex--; // pop the item
+        $this->tokenindex--; // discard the parenthesis
+    }
 }
-$lex = new PlayerLexer('(sense_body 0 (view_mode high normal) (stamina 8000 1 130600) (speed 0 0) (head_angle 0) (kick 0) (dash 0) (turn 0) (say 0) (turn_neck 0) (catch 0) (move 0) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision none) (foul  (charged 0) (card none)))
-(see 0 ((f r t) 55.7 3) ((f g r b) 70.8 38) ((g r) 66.7 34) ((f g r t) 62.8 28) ((f p r c) 53.5 43) ((f p r t) 42.5 23) ((f t 0) 3.6 -34 0 0) ((f t r 10) 13.2 -9 0 0) ((f t r 20) 23.1 -5) ((f t r 30) 33.1 -3 0 0) ((f t r 40) 42.9 -3) ((f t r 50) 53 -2) ((f r 0) 70.8 31) ((f r t 10) 66 24) ((f r t 20) 62.8 16) ((f r t 30) 60.9 7) ((f r b 10) 76.7 38) ((f r b 20) 83.1 43) ((P) 3 180) ((p "opponent" 1 goalie) 6 0 0 0 0 0) ((p "opponent" 2) 9 0 0 0 0 0))
-', new Logger);
+$lex = new PlayerLexer('(see 0 ((f r t) 55.7 3) ((f g r b) 70.8 38) ((g r) 66.7 34) ((f g r t) 62.8 28) ((f p r c) 53.5 43) ((f p r t) 42.5 23) ((f t 0) 3.6 -34 0 0) ((f t r 10) 13.2 -9 0 0) ((f t r 20) 23.1 -5) ((f t r 30) 33.1 -3 0 0) ((f t r 40) 42.9 -3) ((f t r 50) 53 -2) ((f r 0) 70.8 31) ((f r t 10) 66 24) ((f r t 20) 62.8 16) ((f r t 30) 60.9 7) ((f r b 10) 76.7 38) ((f r b 20) 83.1 43) ((P) 3 180) ((p "opponent" 1 goalie) 6 0 0 0 0 0) ((p "opponent" 2) 9 0 0 0 0 0))
+(sense_body 0 (view_mode high normal) (stamina 8000 1 130600) (speed 0 0) (head_angle 0) (kick 0) (dash 0) (turn 0) (say 0) (turn_neck 0) (catch 0) (move 0) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision none) (foul  (charged 0) (card none)))', new Logger);
 $lex->debug = true;
 $parser = new PlayerParser();
 $parser->setup($lex);
