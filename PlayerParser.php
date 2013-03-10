@@ -171,6 +171,19 @@ class PlayerParser
                 a::CLOSEPAREN => 'handleSee'
             ),
             'reduce' => array(
+                'seeitem' => 'reduceSeenItem',
+            )
+        ),
+        'seeitem' => array(
+            'knowntokens' => array(
+                a::UNCLEARBALL => 'handleSeeItem',
+                a::UNCLEARFLAG => 'handleSeeItem',
+                a::UNCLEARPLAYER => 'handleSeeItem',
+                a::UNCLEARGOAL => 'handleSeeItem',
+                a::GOALL => 'handleSeeItem',
+                a::GOALR => 'handleSeeItem',
+                a::CENTERFLAG => 'handleSeeItem',
+                a::CLOSEPAREN => 'handleSeeItem'
             )
         ),
         'player_param' => array(
