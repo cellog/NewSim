@@ -814,13 +814,3 @@ class PlayerParser
         $this->tokenindex--; // discard the parenthesis
     }
 }
-class Logger {
-    function log($a) {echo $a,"\n";}
-}
-
-$lex = new PlayerLexer('(hear 2 self "hi")', new Logger);
-$lex->debug = true;
-$parser = new PlayerParser();
-$parser->setup($lex);
-$ret = $parser->parse();
-var_dump($ret);
