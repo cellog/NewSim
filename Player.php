@@ -30,7 +30,8 @@ class Player extends UDP
 
     function parse($string)
     {
-        $this->lexer->setup($string);
+        echo "parsing \"$string\"\n";
+        $this->lexer->setup($string, new Logger);
         $this->parser->setup($this->lexer);
         $info = $this->parser->parse();
         foreach ($info as $tag) {
@@ -49,6 +50,8 @@ class Player extends UDP
                 $this->serverparams = $tag;
             } elseif ($tag instanceof PlayerParams) {
                 $this->playerparams = $tag;
+            } elseif ($tag instanceof \Exception) {
+                throw $tag;
             }
         }
     }

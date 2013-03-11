@@ -136,7 +136,7 @@ class PlayerLexer
     public $logger;
     private $_string = '';
 
-    function __construct($data, Logger $log = null)
+    function setup($data, Logger $log = null)
     {
         $this->input = str_replace("\r\n", "\n", $data);
         $this->N = 0;
@@ -176,16 +176,16 @@ class PlayerLexer
 %line $this->line
 
 IDENTIFIER = /[\-_a-zA-Z0-9]+/
-WHITESPACE = /\s+|\r|\n/
+WHITESPACE = /\s+|\r|\n|\x00/
 ERROR = "error"
 ERRORTYPE = /[a-zA-Z_]+/
 SIDE = /l|r/
 NUMBER = /-?[0-9]+/
-REALNUMBER = /-?[0-9]+\.[0-9]+/
+REALNUMBER = /-?[0-9]+\.[0-9]+(e-?[0-9]+)?/
 HIGHLOW = /high|low/
 VIEWWIDTH = /narrow|normal|wide/
 FLAG = /\(f [tblr] [tblr] [1-5]0\)/
-FLAG2 = /\(f [pg] [lr] [tb]\)/
+FLAG2 = /\(f [pg] [lr] [tbc]\)/
 
 STRINGCONTENTS = /[^\["\\]+/
 ESCAPEDTHING = @"|\\@
@@ -370,9 +370,10 @@ FLAG {
     $this->token = self::VERSION;
 }
 
-"hear" {
+"hear " {
     if ($this->debug) $this->logger->log("hear [" . $this->value . "]");
     $this->token = self::HEAR;
+    $this->N--;
 }
 
 "clang " {
@@ -400,13 +401,11 @@ FLAG {
 
 "error" {
     if ($this->debug) $this->logger->log("error [" . $this->value . "]");
-    $this->yypushstate(self::INERROR);
     $this->token = self::ERROR;
 }
 
 "warning" {
     if ($this->debug) $this->logger->log("warning [" . $this->value . "]");
-    $this->yypushstate(self::INERROR);
     $this->token = self::WARNING;
 }
 
@@ -420,9 +419,10 @@ FLAG {
     $this->token = self::PLAYERPARAM;
 }
 
-"player_type" {
+"player_type " {
     if ($this->debug) $this->logger->log("player_type [" . $this->value . "]");
     $this->token = self::PLAYERTYPE;
+    $this->N--;
 }
 
 "see" {
@@ -430,14 +430,16 @@ FLAG {
     $this->token = self::SEE;
 }
 
-"sense_body" {
+"sense_body " {
     if ($this->debug) $this->logger->log("sense_body [" . $this->value . "]");
     $this->token = self::SENSEBODY;
+    $this->N--;
 }
 
-"stamina" {
+"stamina " {
     if ($this->debug) $this->logger->log("stamina [" . $this->value . "]");
     $this->token = self::STAMINA;
+    $this->N--;
 }
 
 "speed" {
@@ -465,14 +467,16 @@ FLAG {
     $this->token = self::COLLISION;
 }
 
-"tackle" {
+"tackle " {
     if ($this->debug) $this->logger->log("tackle [" . $this->value . "]");
     $this->token = self::TACKLE;
+    $this->N--;
 }
 
-"foul" {
+"foul " {
     if ($this->debug) $this->logger->log("foul [" . $this->value . "]");
     $this->token = self::FOUL;
+    $this->N--;
 }
 
 WHITESPACE {
@@ -531,19 +535,6 @@ ANYTHINGELSE {
     $this->yybegin(self::INSTRING);
     $this->_string .= $this->value;
     return true;
-}
-*/
-/*lex2php
-%statename INERROR
-ERRORTYPE {
-    if ($this->debug) $this->logger->log("error type [" . $this->value . "]");
-    $this->token = self::ERRORTYPE;
-}
-
-")" {
-    if ($this->debug) $this->logger->log("parenthesis [" . $this->value . "]");
-    $this->token = self::CLOSEPAREN;
-    $this->yypopstate();
 }
 */
 }

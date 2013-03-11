@@ -133,6 +133,8 @@ class PlayerParser
         'tag' => array(
             'knowntokens' => array(
                 a::INIT => 'handleInit',
+                a::ERROR => 'handleError',
+                a::WARNING => 'handleError',
                 a::SERVERPARAM => 'handleServerParam',
                 a::PLAYERPARAM => 'handlePlayerParam',
                 a::PLAYERTYPE => 'handlePlayerType',
@@ -143,6 +145,12 @@ class PlayerParser
             ),
             'reduce' => array(
                 'player_type' => 'reducePlayerType'
+            )
+        ),
+        'error' => array(
+            'knowntokens' => array(
+                a::CLOSEPAREN => 'handleError',
+                a::IDENTIFIER => 'handleError',
             )
         ),
         'init' => array(
@@ -385,6 +393,26 @@ class PlayerParser
         return;
     }
 
+    function handleError()
+    {
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to previous state
+            $close = $this->stack();
+            while (--$this->tokenindex > $this->errorToken) {
+                $message .= $this->value();
+            }
+            $this->tokenindex++;
+            $this->replace($close);
+            $this->tokenindex--;
+            $this->replace(new \Exception($message));
+            return true;
+        }
+        if ($this->token() == a::ERROR) {
+            $this->pushstate('error');
+            $this->errorToken = $this->tokenindex;
+        }
+    }
+
     function handleInit()
     {
         if ($this->token() == a::CLOSEPAREN) {
@@ -395,6 +423,7 @@ class PlayerParser
             $param = new namespace\Init;
             $this->replace($param);
             $this->pushstate('init');
+            return;
         }
         $this->stack(-1)->setValue($this->value());
         $this->tokenindex--; // discard
