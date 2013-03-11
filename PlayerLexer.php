@@ -376,14 +376,15 @@ class PlayerLexer
               51 => 0,
               52 => 0,
               53 => 0,
-              54 => 1,
-              56 => 0,
+              54 => 0,
+              55 => 1,
               57 => 0,
+              58 => 0,
             );
         if ($this->N >= strlen($this->input)) {
             return false; // end of input
         }
-        $yy_global_pattern = '/\G(\\(B\\))|\G(\\(b\\))|\G(\\(P\\))|\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)/';
+        $yy_global_pattern = '/\G(\\(B\\))|\G(\\(b\\))|\G(\\(P\\))|\G(\\(p\\))|\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)/';
 
         do {
             if (preg_match($yy_global_pattern,$this->input, $yymatches, null, $this->N)) {
@@ -424,62 +425,63 @@ class PlayerLexer
                     continue;
                 } else {
                     $yy_yymore_patterns = array(
-        1 => array(0, "\G(\\(b\\))|\G(\\(P\\))|\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        2 => array(0, "\G(\\(P\\))|\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        3 => array(0, "\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        4 => array(0, "\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        5 => array(0, "\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        6 => array(0, "\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        7 => array(0, "\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        8 => array(0, "\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        9 => array(0, "\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        10 => array(0, "\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        11 => array(0, "\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        12 => array(0, "\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        13 => array(0, "\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        14 => array(0, "\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        15 => array(0, "\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        16 => array(0, "\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        17 => array(0, "\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        18 => array(0, "\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        19 => array(0, "\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        20 => array(0, "\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        21 => array(0, "\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        22 => array(0, "\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        23 => array(0, "\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        24 => array(0, "\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        25 => array(0, "\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        26 => array(0, "\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        27 => array(0, "\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        28 => array(0, "\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        29 => array(0, "\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        30 => array(0, "\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        31 => array(0, "\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        32 => array(0, "\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        33 => array(0, "\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        34 => array(0, "\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        35 => array(0, "\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        36 => array(0, "\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        37 => array(0, "\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        38 => array(0, "\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        39 => array(0, "\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        40 => array(0, "\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        41 => array(0, "\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        42 => array(0, "\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        43 => array(0, "\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        44 => array(0, "\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        45 => array(0, "\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        46 => array(0, "\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        47 => array(0, "\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        48 => array(0, "\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        49 => array(0, "\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        50 => array(0, "\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        51 => array(0, "\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        52 => array(0, "\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        53 => array(0, "\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        54 => array(1, "\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
-        56 => array(1, "\G([\-_a-zA-Z0-9]+)"),
-        57 => array(1, ""),
+        1 => array(0, "\G(\\(b\\))|\G(\\(P\\))|\G(\\(p\\))|\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        2 => array(0, "\G(\\(P\\))|\G(\\(p\\))|\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        3 => array(0, "\G(\\(p\\))|\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        4 => array(0, "\G(\\(F\\))|\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        5 => array(0, "\G(\\(G\\))|\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        6 => array(0, "\G(\\(g l\\))|\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        7 => array(0, "\G(\\(g r\\))|\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        8 => array(0, "\G(\\(f [pg] [lr] [tbc]\\))|\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        9 => array(0, "\G(\\(f c\\))|\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        10 => array(0, "\G(\\(f l t\\))|\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        11 => array(0, "\G(\\(f c t\\))|\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        12 => array(0, "\G(\\(f r t\\))|\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        13 => array(0, "\G(\\(f l b\\))|\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        14 => array(0, "\G(\\(f c b\\))|\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        15 => array(0, "\G(\\(f r b\\))|\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        16 => array(0, "\G(\\(l r\\))|\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        17 => array(0, "\G(\\(l t\\))|\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        18 => array(0, "\G(\\(l l\\))|\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        19 => array(0, "\G(\\(l b\\))|\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        20 => array(0, "\G(\\(f r 0\\))|\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        21 => array(0, "\G(\\(f t 0\\))|\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        22 => array(0, "\G(\\(f l 0\\))|\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        23 => array(0, "\G(\\(f b 0\\))|\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        24 => array(0, "\G(\\(f [tblr] [tblr] [1-5]0\\))|\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        25 => array(0, "\G(p )|\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        26 => array(0, "\G(\\()|\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        27 => array(0, "\G(\\))|\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        28 => array(0, "\G(init)|\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        29 => array(0, "\G(\")|\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        30 => array(0, "\G(reconnect)|\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        31 => array(0, "\G(version)|\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        32 => array(0, "\G(hear )|\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        33 => array(0, "\G(clang )|\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        34 => array(0, "\G(goalie )|\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        35 => array(0, "\G(goalie\\))|\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        36 => array(0, "\G(view_mode)|\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        37 => array(0, "\G(error)|\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        38 => array(0, "\G(warning)|\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        39 => array(0, "\G(server_param)|\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        40 => array(0, "\G(player_param)|\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        41 => array(0, "\G(player_type )|\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        42 => array(0, "\G(see)|\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        43 => array(0, "\G(sense_body )|\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        44 => array(0, "\G(stamina )|\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        45 => array(0, "\G(speed)|\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        46 => array(0, "\G(arm)|\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        47 => array(0, "\G(target)|\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        48 => array(0, "\G(focus)|\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        49 => array(0, "\G(collision)|\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        50 => array(0, "\G(tackle )|\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        51 => array(0, "\G(foul )|\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        52 => array(0, "\G(change_player_type)|\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        53 => array(0, "\G(\\s+|\r|\n|\x00)|\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        54 => array(0, "\G(-?[0-9]+\\.[0-9]+(e-?[0-9]+)?)|\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        55 => array(1, "\G(-?[0-9]+)|\G([\-_a-zA-Z0-9]+)"),
+        57 => array(1, "\G([\-_a-zA-Z0-9]+)"),
+        58 => array(1, ""),
     );
 
                     // yymore is needed
@@ -557,157 +559,163 @@ class PlayerLexer
     function yy_r2_4($yy_subpatterns)
     {
 
+    if ($this->debug) $this->logger->log("unclear player [" . $this->value . "]");
+    $this->token = self::UNCLEARPLAYER;
+    }
+    function yy_r2_5($yy_subpatterns)
+    {
+
     if ($this->debug) $this->logger->log("unclear flag [" . $this->value . "]");
     $this->token = self::UNCLEARFLAG;
     }
-    function yy_r2_5($yy_subpatterns)
+    function yy_r2_6($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("unclear goal [" . $this->value . "]");
     $this->token = self::UNCLEARGOAL;
     }
-    function yy_r2_6($yy_subpatterns)
+    function yy_r2_7($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("left goal [" . $this->value . "]");
     $this->token = self::GOALL;
     }
-    function yy_r2_7($yy_subpatterns)
+    function yy_r2_8($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("right goal [" . $this->value . "]");
     $this->token = self::GOALR;
     }
-    function yy_r2_8($yy_subpatterns)
+    function yy_r2_9($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("virtual flag [" . $this->value . "]");
     $this->token = self::VIRTUALFLAG;
     }
-    function yy_r2_9($yy_subpatterns)
+    function yy_r2_10($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("center flag [" . $this->value . "]");
     $this->token = self::CENTERFLAG;
     }
-    function yy_r2_10($yy_subpatterns)
+    function yy_r2_11($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("corner flag left/top [" . $this->value . "]");
     $this->token = self::LEFTTOPFLAG;
     }
-    function yy_r2_11($yy_subpatterns)
+    function yy_r2_12($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("flag center/top [" . $this->value . "]");
     $this->token = self::CENTERTOPFLAG;
     }
-    function yy_r2_12($yy_subpatterns)
+    function yy_r2_13($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("corner flag right/top [" . $this->value . "]");
     $this->token = self::RIGHTTOPFLAG;
     }
-    function yy_r2_13($yy_subpatterns)
+    function yy_r2_14($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("corner flag left/bottom [" . $this->value . "]");
     $this->token = self::LEFTBOTTOMFLAG;
     }
-    function yy_r2_14($yy_subpatterns)
+    function yy_r2_15($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("flag center/bottom [" . $this->value . "]");
     $this->token = self::CENTERBOTTOMFLAG;
     }
-    function yy_r2_15($yy_subpatterns)
+    function yy_r2_16($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("corner flag right/bottom [" . $this->value . "]");
     $this->token = self::RIGHTBOTTOMFLAG;
     }
-    function yy_r2_16($yy_subpatterns)
+    function yy_r2_17($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("right line [" . $this->value . "]");
     $this->token = self::LINERIGHT;
     }
-    function yy_r2_17($yy_subpatterns)
+    function yy_r2_18($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("top line [" . $this->value . "]");
     $this->token = self::LINETOP;
     }
-    function yy_r2_18($yy_subpatterns)
+    function yy_r2_19($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("left line [" . $this->value . "]");
     $this->token = self::LINELEFT;
     }
-    function yy_r2_19($yy_subpatterns)
+    function yy_r2_20($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("bottom line [" . $this->value . "]");
     $this->token = self::LINEBOTTOM;
     }
-    function yy_r2_20($yy_subpatterns)
+    function yy_r2_21($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("right flag [" . $this->value . "]");
     $this->token = self::FLAGRIGHT;
     }
-    function yy_r2_21($yy_subpatterns)
+    function yy_r2_22($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("top flag [" . $this->value . "]");
     $this->token = self::FLAGTOP;
     }
-    function yy_r2_22($yy_subpatterns)
+    function yy_r2_23($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("left flag [" . $this->value . "]");
     $this->token = self::FLAGLEFT;
     }
-    function yy_r2_23($yy_subpatterns)
+    function yy_r2_24($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("bottom flag [" . $this->value . "]");
     $this->token = self::FLAGBOTTOM;
     }
-    function yy_r2_24($yy_subpatterns)
+    function yy_r2_25($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("virtual flag [" . $this->value . "]");
     $this->token = self::VIRTUALFLAG;
     }
-    function yy_r2_25($yy_subpatterns)
+    function yy_r2_26($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("player [" . $this->value . "]");
     $this->token = self::PLAYER;
     $this->N--;
     }
-    function yy_r2_26($yy_subpatterns)
+    function yy_r2_27($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("parenthesis [" . $this->value . "]");
     $this->yypushstate(self::INTAG);
     $this->token = self::OPENPAREN;
     }
-    function yy_r2_27($yy_subpatterns)
+    function yy_r2_28($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("parenthesis [" . $this->value . "]");
     $this->token = self::CLOSEPAREN;
     $this->yypopstate();
     }
-    function yy_r2_28($yy_subpatterns)
+    function yy_r2_29($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("init [" . $this->value . "]");
     $this->token = self::INIT;
     }
-    function yy_r2_29($yy_subpatterns)
+    function yy_r2_30($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("begin string");
@@ -716,37 +724,30 @@ class PlayerLexer
     $this->N++; // skip the opening quote
     return true;
     }
-    function yy_r2_30($yy_subpatterns)
+    function yy_r2_31($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("reconnect [" . $this->value . "]");
     $this->token = self::RECONNECT;
     }
-    function yy_r2_31($yy_subpatterns)
+    function yy_r2_32($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("version [" . $this->value . "]");
     $this->token = self::VERSION;
     }
-    function yy_r2_32($yy_subpatterns)
+    function yy_r2_33($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("hear [" . $this->value . "]");
     $this->token = self::HEAR;
     $this->N--;
     }
-    function yy_r2_33($yy_subpatterns)
+    function yy_r2_34($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("clang [" . $this->value . "]");
     $this->token = self::CLANG;
-    $this->N--;
-    }
-    function yy_r2_34($yy_subpatterns)
-    {
-
-    if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
-    $this->token = self::GOALIE;
     $this->N--;
     }
     function yy_r2_35($yy_subpatterns)
@@ -759,129 +760,136 @@ class PlayerLexer
     function yy_r2_36($yy_subpatterns)
     {
 
+    if ($this->debug) $this->logger->log("goalie [" . $this->value . "]");
+    $this->token = self::GOALIE;
+    $this->N--;
+    }
+    function yy_r2_37($yy_subpatterns)
+    {
+
     if ($this->debug) $this->logger->log("view_mode [" . $this->value . "]");
     $this->token = self::VIEWMODE;
     }
-    function yy_r2_37($yy_subpatterns)
+    function yy_r2_38($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("error [" . $this->value . "]");
     $this->token = self::ERROR;
     }
-    function yy_r2_38($yy_subpatterns)
+    function yy_r2_39($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("warning [" . $this->value . "]");
     $this->token = self::WARNING;
     }
-    function yy_r2_39($yy_subpatterns)
+    function yy_r2_40($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("server_param [" . $this->value . "]");
     $this->token = self::SERVERPARAM;
     }
-    function yy_r2_40($yy_subpatterns)
+    function yy_r2_41($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("player_param [" . $this->value . "]");
     $this->token = self::PLAYERPARAM;
     }
-    function yy_r2_41($yy_subpatterns)
+    function yy_r2_42($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("player_type [" . $this->value . "]");
     $this->token = self::PLAYERTYPE;
     $this->N--;
     }
-    function yy_r2_42($yy_subpatterns)
+    function yy_r2_43($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("see [" . $this->value . "]");
     $this->token = self::SEE;
     }
-    function yy_r2_43($yy_subpatterns)
+    function yy_r2_44($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("sense_body [" . $this->value . "]");
     $this->token = self::SENSEBODY;
     $this->N--;
     }
-    function yy_r2_44($yy_subpatterns)
+    function yy_r2_45($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("stamina [" . $this->value . "]");
     $this->token = self::STAMINA;
     $this->N--;
     }
-    function yy_r2_45($yy_subpatterns)
+    function yy_r2_46($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("speed [" . $this->value . "]");
     $this->token = self::SPEED;
     }
-    function yy_r2_46($yy_subpatterns)
+    function yy_r2_47($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("arm [" . $this->value . "]");
     $this->token = self::ARM;
     }
-    function yy_r2_47($yy_subpatterns)
+    function yy_r2_48($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("target [" . $this->value . "]");
     $this->token = self::TARGET;
     }
-    function yy_r2_48($yy_subpatterns)
+    function yy_r2_49($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("focus [" . $this->value . "]");
     $this->token = self::FOCUS;
     }
-    function yy_r2_49($yy_subpatterns)
+    function yy_r2_50($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("collision [" . $this->value . "]");
     $this->token = self::COLLISION;
     }
-    function yy_r2_50($yy_subpatterns)
+    function yy_r2_51($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("tackle [" . $this->value . "]");
     $this->token = self::TACKLE;
     $this->N--;
     }
-    function yy_r2_51($yy_subpatterns)
+    function yy_r2_52($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("foul [" . $this->value . "]");
     $this->token = self::FOUL;
     $this->N--;
     }
-    function yy_r2_52($yy_subpatterns)
+    function yy_r2_53($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("change_player_type [" . $this->value . "]");
     $this->token = self::CHANGEPLAYERTYPE;
     }
-    function yy_r2_53($yy_subpatterns)
+    function yy_r2_54($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("whitespace [" . $this->value . "]");
     return false;
     }
-    function yy_r2_54($yy_subpatterns)
+    function yy_r2_55($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("real number [" . $this->value . "]");
     $this->token = self::REALNUMBER;
     }
-    function yy_r2_56($yy_subpatterns)
+    function yy_r2_57($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("number [" . $this->value . "]");
     $this->token = self::NUMBER;
     }
-    function yy_r2_57($yy_subpatterns)
+    function yy_r2_58($yy_subpatterns)
     {
 
     if ($this->debug) $this->logger->log("identifier [" . $this->value . "]");

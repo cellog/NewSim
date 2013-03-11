@@ -13,7 +13,7 @@ class Tester extends ThroughBall\Player {
             $this->moveTowards($ball);
             return;
         }
-        $this->turn(100);
+        $this->turn(70);
     }
 }
 

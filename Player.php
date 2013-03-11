@@ -16,6 +16,7 @@ class Player extends UDP
     protected $see;
     protected $commands = array();
     protected $debug = true;
+    protected $lexdebug = false;
     protected $cycle = 0;
     function __construct($team, $isgoalie = false, $host = '127.0.0.1', $port = 6000)
     {
@@ -36,7 +37,11 @@ class Player extends UDP
         if ($this->debug) {
             echo "parsing \"$string\"\n";
         }
-        $this->lexer->setup($string);
+        $logger = null;
+        if ($this->lexdebug) {
+            $logger = new Logger;
+        }
+        $this->lexer->setup($string, $logger);
         $this->parser->setup($this->lexer);
         $info = $this->parser->parse();
         foreach ($info as $tag) {

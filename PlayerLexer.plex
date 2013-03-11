@@ -226,6 +226,11 @@ WHITESPACE {
     $this->token = self::UNCLEARPLAYER;
 }
 
+"(p)" {
+    if ($this->debug) $this->logger->log("unclear player [" . $this->value . "]");
+    $this->token = self::UNCLEARPLAYER;
+}
+
 "(F)" {
     if ($this->debug) $this->logger->log("unclear flag [" . $this->value . "]");
     $this->token = self::UNCLEARFLAG;
