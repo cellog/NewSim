@@ -19,6 +19,7 @@ include __DIR__ . '/Foul.php';
 include __DIR__ . '/ViewMode.php';
 include __DIR__ . '/Stamina.php';
 include __DIR__ . '/Speed.php';
+include __DIR__ . '/Hear.php';
 use ThroughBall\PlayerLexer as a;
 class ParseException extends \Exception {}
 class PlayerParser
@@ -152,6 +153,7 @@ class PlayerParser
                 a::PLAYERTYPE => 'handlePlayerType',
                 a::SENSEBODY => 'handleSenseBody',
                 a::SEE => 'handleSee',
+                a::HEAR => 'handleHear',
                 a::CLOSEPAREN => 'handleTagClose'
             ),
             'reduce' => array(
@@ -412,6 +414,14 @@ class PlayerParser
                 a::REALNUMBER => 'handleSimpleParam',
                 a::QUOTEDSTRING => 'handleSimpleParam',
                 a::CLOSEPAREN => 'handleSimpleParam'
+            )
+        ),
+        'hear' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleHear',
+                a::NUMBER => 'handleHear',
+                a::QUOTEDSTRING => 'handleHear',
+                a::CLOSEPAREN => 'handleHear'
             )
         )
     );
@@ -808,6 +818,22 @@ class PlayerParser
         $this->tokenindex--; // discard value
     }
 
+    function handleHear()
+    {
+        $a = $this->token();
+        if ($a == a::HEAR) {
+            $this->replace(new namespace\Hear);
+            $this->pushstate('hear');
+            return;
+        }
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            return true; // handle in parent
+        }
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard
+    }
+
     function reduceSimpleTag()
     {
         $this->stack(-1)->addParam($this->stack());
@@ -834,7 +860,11 @@ class PlayerParser
         $this->tokenindex--; // discard the parenthesis
     }
 }
-$lex = new PlayerLexer('(sense_body 0 (view_mode high normal) (stamina 8000 1 130600) (speed 0 0) (head_angle 0) (kick 0) (dash 0) (turn 0) (say 0) (turn_neck 0) (catch 0) (move 0) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision none) (foul  (charged 0) (card none)))', new Logger);
+class Logger {
+    function log($a) {echo $a,"\n";}
+}
+
+$lex = new PlayerLexer('(hear 2 self "hi")', new Logger);
 $lex->debug = true;
 $parser = new PlayerParser();
 $parser->setup($lex);

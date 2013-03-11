@@ -108,6 +108,7 @@ class PlayerLexer
         self::TACKLE => 'tackle',
         self::FOUL => 'foul',
         self::COLLISION => 'collision',
+        self::HEAR => 'hear',
     );
 
     const INIT = 1;
@@ -210,6 +211,7 @@ class PlayerLexer
     const TACKLE = 94;
     const FOUL = 95;
     const COLLISION = 96;
+    const HEAR = 97;
 
     private $input;
     public $N;
@@ -535,6 +537,11 @@ FLAG {
     $this->token = self::VERSION;
 }
 
+"hear" {
+    if ($this->debug) $this->logger->log("hear [" . $this->value . "]");
+    $this->token = self::HEAR;
+}
+
 "clang " {
     if ($this->debug) $this->logger->log("clang [" . $this->value . "]");
     $this->token = self::CLANG;
@@ -708,12 +715,3 @@ ERRORTYPE {
 */
 }
 class Exception extends \Exception {}
-
-class Logger {
-    function log($d) {echo $d,"\n";}
-}
-
-$a = new PlayerLexer('(sense_body 0 (view_mode high normal) (stamina 8000 1 130600) (speed 0 0) (head_angle 0) (kick 0) (dash 0) (turn 0) (say 0) (turn_neck 0) (catch 0) (move 0) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision none) (foul  (charged 0) (card none)))', new Logger);
-$a->debug = true;
-
-while ($a->yylex());
