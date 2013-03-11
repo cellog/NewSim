@@ -1,6 +1,7 @@
 <?php
 namespace ThroughBall;
 class Arm extends BodyItem {
+    protected $name = 'arm';
     private $currentparam = 0;
     private $paramnames = array(
         'movable', // cycles until the arm is allowed to be moved again

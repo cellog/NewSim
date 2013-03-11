@@ -1,6 +1,7 @@
 <?php
 namespace ThroughBall;
 class Collision extends BodyItem {
+    protected $name = 'collision';
     protected $collisions = array();
 
     function setValue($value)

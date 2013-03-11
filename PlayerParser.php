@@ -13,9 +13,12 @@ include __DIR__ . '/BodyItem.php';
 include __DIR__ . '/SenseBody.php';
 include __DIR__ . '/Tackle.php';
 include __DIR__ . '/Arm.php';
-include __DIR__ . '/Collission.php';
+include __DIR__ . '/Collision.php';
 include __DIR__ . '/Focus.php';
 include __DIR__ . '/Foul.php';
+include __DIR__ . '/ViewMode.php';
+include __DIR__ . '/Stamina.php';
+include __DIR__ . '/Speed.php';
 use ThroughBall\PlayerLexer as a;
 class ParseException extends \Exception {}
 class PlayerParser
@@ -167,27 +170,26 @@ class PlayerParser
         'sense_body' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleSenseBody',
-                a::IDENTIFIER => 'handleSenseBody',
-                a::VIEWMODE => 'handleSenseBody',
-                a::STAMINA => 'handleSenseBody',
-                a::SPEED => 'handleSenseBody',
-                a::ARM => 'handleSenseBody',
-                a::FOCUS => 'handleSenseBody',
-                a::TACKLE => 'handleSenseBody',
-                a::COLLISION => 'handleSenseBody',
-                a::FOUL => 'handleSenseBody',
+                a::NUMBER => 'handleSenseBody',
                 a::CLOSEPAREN => 'handleSenseBody'
             ),
             'reduce' => array(
-                'simpletag' => 'reduceSimpleTag',
-                'viewmode' => 'reduceFancyTag',
-                'stamina' => 'reduceFancyTag',
-                'speed' => 'reduceFancyTag',
-                'arm' => 'reduceFancyTag',
-                'focus' => 'reduceFancyTag',
-                'tackle' => 'reduceFancyTag',
-                'collision' => 'reduceFancyTag',
-                'foul' => 'reduceFancyTag',
+                'sensedthing' => 'reduceSimpleTag',
+            )
+        ),
+        'sensedthing' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleSensedThing',
+                a::CLOSEPAREN => 'handleSensedThing',
+                a::VIEWMODE => 'handleViewMode',
+                a::STAMINA => 'handleStamina',
+                a::SPEED => 'handleSpeed',
+                a::ARM => 'handleArm',
+                a::FOCUS => 'handleFocus',
+                a::TACKLE => 'handleTackle',
+                a::COLLISION => 'handleCollision',
+                a::FOUL => 'handleFoul',
+                a::NUMBER => 'handleSensedThing',
             )
         ),
         'viewmode' => array(
@@ -199,6 +201,7 @@ class PlayerParser
         'stamina' => array(
             'knowntokens' => array(
                 a::REALNUMBER => 'handleStamina',
+                a::NUMBER => 'handleStamina',
                 a::CLOSEPAREN => 'handleStamina',
             )
         ),
@@ -212,13 +215,16 @@ class PlayerParser
         'arm' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleArm',
+                a::CLOSEPAREN => 'handleArm',
             )
         ),
         'subarm' => array(
             'knowntokens' => array(
-                a::IDENTIFIER => 'handleArm',
-                a::TARGET => 'handleArm',
+                a::IDENTIFIER => 'handleSubArm',
+                a::TARGET => 'handleSubArm',
                 a::CLOSEPAREN => 'handleSubArm',
+                a::NUMBER => 'handleSubArm',
+                a::REALNUMBER => 'handleSubArm',
             )
         ),
         'focus' => array(
@@ -479,24 +485,6 @@ class PlayerParser
         $this->tokenindex--; // discard the token
     }
 
-    function handleSenseBody()
-    {
-        $a = $this->token();
-        if ($a == a::OPENPAREN) {
-            $this->tokenindex--;
-            return;
-        }
-        if ($a == a::CLOSEPAREN) {
-            $this->popstate();
-            return true; // handle this in the parent
-        }
-        if ($a == a::SENSEBODY) {
-            $this->replace(new namespace\SenseBody);
-            $this->pushstate('sense_body');
-            return;
-        }
-    }
-
     function handleSeeItem()
     {
         if ($this->token() == a::CLOSEPAREN) {
@@ -543,6 +531,127 @@ class PlayerParser
             return;
         }
         $this->replace(new namespace\SeenPlayer);
+    }
+
+    /***********************************************************************************************/
+    /* sense_body */
+    function handleSenseBody()
+    {
+        $a = $this->token();
+        if ($a == a::OPENPAREN) {
+            $this->tokenindex--;
+            $this->pushstate('sensedthing');
+            return;
+        }
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            return true; // handle this in the parent
+        }
+        if ($a == a::SENSEBODY) {
+            $this->replace(new namespace\SenseBody);
+            $this->pushstate('sense_body');
+            return;
+        }
+        // we were passed the simulator time
+        $this->stack(-1)->setTime($this->value());
+        $this->tokenindex--; // discard the token
+    }
+
+    function handleSensedThing()
+    {
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->tokenindex--; // discard the parenthesis
+            $this->popstate(); // return to previous state
+            return;
+        }
+        $a = $this->token();
+        if ($a == a::QUOTEDSTRING || $a == a::NUMBER || $a == a::REALNUMBER) {
+            $this->stack(-1)->setValue($this->value());
+            $this->tokenindex--;
+            return;
+        }
+        if ($a == a::IDENTIFIER) {
+            $a = $this->value();
+            $this->replace(new namespace\BodyItem);
+            $this->stack()->setName($a);
+            return;
+        }
+    }
+
+    function senseBodyHelper($tag, $state, $class)
+    {
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to previous state
+            return true; // handle in previous state
+        }
+        if ($this->token() == $tag) {
+            $this->pushstate($state);
+            $this->replace(new $class);
+            return;
+        }
+    }
+
+    function handleViewMode()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::VIEWMODE) {
+            return $this->senseBodyHelper(a::VIEWMODE, 'viewmode', __NAMESPACE__ . '\\ViewMode');
+        }
+        // we are parsing the identifiers here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
+    function handleStamina()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::STAMINA) {
+            return $this->senseBodyHelper(a::STAMINA, 'stamina', __NAMESPACE__ . '\\Stamina');
+        }
+        // we are parsing the numbers here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
+    function handleSpeed()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::SPEED) {
+            return $this->senseBodyHelper(a::SPEED, 'speed', __NAMESPACE__ . '\\Speed');
+        }
+        // we are parsing the numbers here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
+    function handleArm()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::ARM) {
+            return $this->senseBodyHelper(a::ARM, 'arm', __NAMESPACE__ . '\\Arm');
+        }
+        if ($a == a::OPENPAREN) {
+            $this->pushstate('subarm');
+            $this->tokenindex--; // discard
+            return;
+        }
+    }
+
+    function handleSubArm()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            $this->tokenindex--; // discard
+            return;
+        }
+        if ($a != a::NUMBER && $a != a::REALNUMBER) {
+            $this->tokenindex--; // discard
+            return;
+        }
+        // we are parsing the numbers here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
     }
 
     function reduceSimpleTag()

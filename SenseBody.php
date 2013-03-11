@@ -4,7 +4,7 @@ class SenseBody
 {
     protected $time;
     protected $items = array();
-    function addItem(BodyItem $param)
+    function addParam(BodyItem $param)
     {
         $this->items[$param->getName()] = $param;
     }

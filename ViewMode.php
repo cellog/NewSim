@@ -1,20 +1,18 @@
 <?php
 namespace ThroughBall;
-class Tackle extends BodyItem {
-    protected $name = 'tackle';
+class ViewMode extends BodyItem {
     private $currentparam = 0;
+    protected $name = 'view_mode';
     private $paramnames = array(
-        'expires', // cycles until the player no longer attempts to tackle
-        'count',
+        'quality', // either high or low
+        'width', // narrow, normal or wide
     );
     protected $params = array(
-        'expires' => false,
-        'count' => false,
+        'quality' => false,
+        'width' => false,
     );
     function setValue($value)
     {
         $this->params[$this->paramnames[$this->currentparam++]] = $value;
     }
-
-    
 }

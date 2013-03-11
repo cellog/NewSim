@@ -1,6 +1,7 @@
 <?php
 namespace ThroughBall;
 class Focus extends BodyItem {
+    protected $name = 'focus';
     private $currentparam = 0;
     private $paramnames = array(
         'target',
