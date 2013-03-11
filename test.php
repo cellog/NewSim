@@ -7,10 +7,12 @@ $manager = new ThroughBall\Util\UDPManager('testing');
 $opponent = new ThroughBall\Util\UDPManager('opponent');
 
 $goalie = $manager->addGoalie();
-$player = $manager->addPlayer();
+$player1 = $manager->addPlayer();
 
 $goalie = $opponent->addGoalie();
 $player = $opponent->addPlayer();
 
+$player->move(-10, 10);
+$player1->move(-10, 10);
 $manager->run();
 ?>

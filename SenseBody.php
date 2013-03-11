@@ -13,4 +13,9 @@ class SenseBody
     {
         $this->time = $time;
     }
+
+    function getTime()
+    {
+        return $this->time;
+    }
 }

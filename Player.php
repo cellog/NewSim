@@ -14,6 +14,9 @@ class Player extends UDP
     protected $playertypes;
     protected $sensebody;
     protected $see;
+    protected $commands = array();
+    protected $debug = false;
+    protected $cycle = 0;
     function __construct($team, $isgoalie = false, $host = '127.0.0.1', $port = 6000)
     {
         parent::__construct($team, $host, $port);
@@ -30,8 +33,10 @@ class Player extends UDP
 
     function parse($string)
     {
-        echo "parsing \"$string\"\n";
-        $this->lexer->setup($string, new Logger);
+        if ($this->debug) {
+            echo "parsing \"$string\"\n";
+        }
+        $this->lexer->setup($string);
         $this->parser->setup($this->lexer);
         $info = $this->parser->parse();
         foreach ($info as $tag) {
@@ -54,23 +59,50 @@ class Player extends UDP
                 throw $tag;
             }
         }
+        if (isset($this->commands[$this->cycle])) {
+            foreach ($this->commands[$this->cycle] as $command) {
+                $this->send($command);
+            }
+            unset($this->commands[$this->cycle]);
+        }
+        
+    }
+
+    function queueCommand($cycle, $command)
+    {
+        $this->commands[$cycle][] = $command . "\x00";
     }
 
     function handleSenseBody($sensebody)
     {
         $this->sensebody = $sensebody;
-        echo "sense body ", $this->unum, "\n";
+        $this->cycle = $sensebody->getTime();
+        if ($this->debug) {
+            echo "sense body ", $this->unum, "\n";
+        }
     }
 
     function handleSee($see)
     {
         $this->see = $see;
-        echo "see ", $this->unum, "\n";
+        if ($this->debug) {
+            echo "see ", $this->unum, "\n";
+        }
     }
 
     function handleHear($hear)
     {
         $this->hear = $hear;
-        echo "hear ", $this->unum, "\n";
+        if ($this->debug) {
+            echo "hear ", $this->unum, "\n";
+        }
+    }
+
+    function move($x, $y)
+    {
+        if ($cycle != 0) {
+            return;
+        }
+        $this->queueCommand(0, '(move ' . $x . ' ' . $y . ')');
     }
 }
