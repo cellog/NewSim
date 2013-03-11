@@ -9,6 +9,13 @@ include __DIR__ . '/Param.php';
 include __DIR__ . '/See.php';
 include __DIR__ . '/Item.php';
 include __DIR__ . '/SeenPlayer.php';
+include __DIR__ . '/BodyItem.php';
+include __DIR__ . '/SenseBody.php';
+include __DIR__ . '/Tackle.php';
+include __DIR__ . '/Arm.php';
+include __DIR__ . '/Collission.php';
+include __DIR__ . '/Focus.php';
+include __DIR__ . '/Foul.php';
 use ThroughBall\PlayerLexer as a;
 class ParseException extends \Exception {}
 class PlayerParser
@@ -160,12 +167,78 @@ class PlayerParser
         'sense_body' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleSenseBody',
+                a::IDENTIFIER => 'handleSenseBody',
+                a::VIEWMODE => 'handleSenseBody',
+                a::STAMINA => 'handleSenseBody',
+                a::SPEED => 'handleSenseBody',
+                a::ARM => 'handleSenseBody',
+                a::FOCUS => 'handleSenseBody',
+                a::TACKLE => 'handleSenseBody',
+                a::COLLISION => 'handleSenseBody',
+                a::FOUL => 'handleSenseBody',
                 a::CLOSEPAREN => 'handleSenseBody'
             ),
             'reduce' => array(
                 'simpletag' => 'reduceSimpleTag',
-                '3tag' => 'reduce3Tag',
-                'complextag' => 'reduceComplexTag'
+                'viewmode' => 'reduceFancyTag',
+                'stamina' => 'reduceFancyTag',
+                'speed' => 'reduceFancyTag',
+                'arm' => 'reduceFancyTag',
+                'focus' => 'reduceFancyTag',
+                'tackle' => 'reduceFancyTag',
+                'collision' => 'reduceFancyTag',
+                'foul' => 'reduceFancyTag',
+            )
+        ),
+        'viewmode' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleViewMode',
+                a::CLOSEPAREN => 'handleViewMode',
+            )
+        ),
+        'stamina' => array(
+            'knowntokens' => array(
+                a::REALNUMBER => 'handleStamina',
+                a::CLOSEPAREN => 'handleStamina',
+            )
+        ),
+        'speed' => array(
+            'knowntokens' => array(
+                a::REALNUMBER => 'handleSpeed',
+                a::NUMBER => 'handleSpeed',
+                a::CLOSEPAREN => 'handleSpeed',
+            )
+        ),
+        'arm' => array(
+            'knowntokens' => array(
+                a::OPENPAREN => 'handleArm',
+            )
+        ),
+        'subarm' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleArm',
+                a::TARGET => 'handleArm',
+                a::CLOSEPAREN => 'handleSubArm',
+            )
+        ),
+        'focus' => array(
+            'knowntokens' => array(
+                a::OPENPAREN => 'handleFocus',
+            )
+        ),
+        'tackle' => array(
+            'knowntokens' => array(
+                a::OPENPAREN => 'handleTackle',
+            )
+        ),
+        'collision' => array(
+            'knowntokens' => array(
+                a::OPENPAREN => 'handleCollision',
+            )
+        ),
+        'foul' => array(
+            'knowntokens' => array(
+                a::OPENPAREN => 'handleFoul',
             )
         ),
         'see' => array(
@@ -406,6 +479,24 @@ class PlayerParser
         $this->tokenindex--; // discard the token
     }
 
+    function handleSenseBody()
+    {
+        $a = $this->token();
+        if ($a == a::OPENPAREN) {
+            $this->tokenindex--;
+            return;
+        }
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            return true; // handle this in the parent
+        }
+        if ($a == a::SENSEBODY) {
+            $this->replace(new namespace\SenseBody);
+            $this->pushstate('sense_body');
+            return;
+        }
+    }
+
     function handleSeeItem()
     {
         if ($this->token() == a::CLOSEPAREN) {
@@ -480,8 +571,7 @@ class PlayerParser
         $this->tokenindex--; // discard the parenthesis
     }
 }
-$lex = new PlayerLexer('(see 0 ((f r t) 55.7 3) ((f g r b) 70.8 38) ((g r) 66.7 34) ((f g r t) 62.8 28) ((f p r c) 53.5 43) ((f p r t) 42.5 23) ((f t 0) 3.6 -34 0 0) ((f t r 10) 13.2 -9 0 0) ((f t r 20) 23.1 -5) ((f t r 30) 33.1 -3 0 0) ((f t r 40) 42.9 -3) ((f t r 50) 53 -2) ((f r 0) 70.8 31) ((f r t 10) 66 24) ((f r t 20) 62.8 16) ((f r t 30) 60.9 7) ((f r b 10) 76.7 38) ((f r b 20) 83.1 43) ((P) 3 180) ((p "opponent" 1 goalie) 6 0 0 0 0 0) ((p "opponent" 2) 9 0 0 0 0 0))
-(sense_body 0 (view_mode high normal) (stamina 8000 1 130600) (speed 0 0) (head_angle 0) (kick 0) (dash 0) (turn 0) (say 0) (turn_neck 0) (catch 0) (move 0) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision none) (foul  (charged 0) (card none)))', new Logger);
+$lex = new PlayerLexer('(sense_body 0 (view_mode high normal) (stamina 8000 1 130600) (speed 0 0) (head_angle 0) (kick 0) (dash 0) (turn 0) (say 0) (turn_neck 0) (catch 0) (move 0) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision none) (foul  (charged 0) (card none)))', new Logger);
 $lex->debug = true;
 $parser = new PlayerParser();
 $parser->setup($lex);
