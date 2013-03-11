@@ -13,4 +13,9 @@ class See
     {
         $this->time = $time;
     }
+
+    function getItem($name)
+    {
+        return $this->items[$name];
+    }
 }

@@ -15,7 +15,7 @@ class Player extends UDP
     protected $sensebody;
     protected $see;
     protected $commands = array();
-    protected $debug = false;
+    protected $debug = true;
     protected $cycle = 0;
     function __construct($team, $isgoalie = false, $host = '127.0.0.1', $port = 6000)
     {
@@ -61,6 +61,9 @@ class Player extends UDP
         }
         if (isset($this->commands[$this->cycle])) {
             foreach ($this->commands[$this->cycle] as $command) {
+                if ($this->debug) {
+                    echo "sending ",$command,"\n";
+                }
                 $this->send($command);
             }
             unset($this->commands[$this->cycle]);
@@ -104,5 +107,26 @@ class Player extends UDP
             return;
         }
         $this->queueCommand(0, '(move ' . $x . ' ' . $y . ')');
+    }
+
+    protected $moveCycle = 0;
+    function moveTowards($item, $speed = 100)
+    {
+        if ($item instanceof Item) {
+            $direction = $item->direction;
+        }
+        if ($this->moveCycle < $this->cycle) {
+            $this->moveCycle = $this->cycle;
+        }
+        $this->queueCommand($this->moveCycle++, '(dash ' . $speed . ' ' . $direction . ')');
+    }
+
+    protected $turnCycle = 0;
+    function turn($angle)
+    {
+        if ($this->turnCycle < $this->cycle) {
+            $this->turnCycle = $this->cycle;
+        }
+        $this->queueCommand($this->turnCycle++, '(turn ' . $angle . ')');
     }
 }

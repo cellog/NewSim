@@ -64,6 +64,7 @@ class PlayerLexer
         self::FOUL => 'foul',
         self::COLLISION => 'collision',
         self::HEAR => 'hear',
+        self::CHANGEPLAYERTYPE => 'change_player_type',
     );
 
     const INIT = 1;
@@ -126,6 +127,7 @@ class PlayerLexer
     const FOUL = 57;
     const COLLISION = 58;
     const HEAR = 59;
+    const CHANGEPLAYERTYPE = 60;
 
     private $input;
     public $N;
@@ -477,6 +479,11 @@ FLAG {
     if ($this->debug) $this->logger->log("foul [" . $this->value . "]");
     $this->token = self::FOUL;
     $this->N--;
+}
+
+"change_player_type" {
+    if ($this->debug) $this->logger->log("change_player_type [" . $this->value . "]");
+    $this->token = self::CHANGEPLAYERTYPE;
 }
 
 WHITESPACE {

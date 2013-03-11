@@ -141,6 +141,7 @@ class PlayerParser
                 a::SENSEBODY => 'handleSenseBody',
                 a::SEE => 'handleSee',
                 a::HEAR => 'handleHear',
+                a::CHANGEPLAYERTYPE => 'handleChangePlayerType',
                 a::CLOSEPAREN => 'handleTagClose'
             ),
             'reduce' => array(
@@ -159,6 +160,12 @@ class PlayerParser
                 a::IDENTIFIER => 'handleInit',
                 a::NUMBER => 'handleInit',
             ),
+        ),
+        'changeplayertype' => array(
+            'knowntokens' => array(
+                a::CLOSEPAREN => 'handleChangePlayerType',
+                a::NUMBER => 'handleChangePlayerType',
+            )
         ),
         'server_param' => array(
             'knowntokens' => array(
@@ -423,6 +430,22 @@ class PlayerParser
             $param = new namespace\Init;
             $this->replace($param);
             $this->pushstate('init');
+            return;
+        }
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard
+    }
+
+    function handleChangePlayerType()
+    {
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to previous state
+            return;
+        }
+        if ($this->token() == a::CHANGEPLAYERTYPE) {
+            $param = new namespace\ChangePlayerType;
+            $this->replace($param);
+            $this->pushstate('changeplayertype');
             return;
         }
         $this->stack(-1)->setValue($this->value());

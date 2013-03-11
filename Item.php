@@ -38,4 +38,9 @@ class Item {
     {
         return $this->params;
     }
+
+    function __get($name)
+    {
+        return $this->params[$name];
+    }
 }

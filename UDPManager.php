@@ -27,9 +27,9 @@ class UDPManager
         return $a;
     }
 
-    function addPlayer($host = '127.0.0.1', $port = 6000)
+    function addPlayer($class = 'ThroughBall\\Player', $host = '127.0.0.1', $port = 6000)
     {
-        $this->addObject($a = new Player($this->team, false, $host, $port));
+        $this->addObject($a = new $class($this->team, false, $host, $port));
         return $a;
     }
 
