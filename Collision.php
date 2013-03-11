@@ -7,6 +7,6 @@ class Collision extends BodyItem {
     function setValue($value)
     {
         if ($value == 'none') return;
-        $this->collisions[str_replace(array('(',')'), array('',''), $value)] = 1;
+        $this->collisions[$value] = 1;
     }
 }

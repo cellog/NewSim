@@ -230,21 +230,56 @@ class PlayerParser
         'focus' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleFocus',
+                a::CLOSEPAREN => 'handleFocus',
+            )
+        ),
+        'subfocus' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleSubFocus',
+                a::TARGET => 'handleSubFocus',
+                a::CLOSEPAREN => 'handleSubFocus',
+                a::NUMBER => 'handleSubFocus',
+                a::REALNUMBER => 'handleSubFocus',
             )
         ),
         'tackle' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleTackle',
+                a::CLOSEPAREN => 'handleTackle',
+            )
+        ),
+        'subtackle' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleSubTackle',
+                a::CLOSEPAREN => 'handleSubTackle',
+                a::NUMBER => 'handleSubTackle',
+                a::REALNUMBER => 'handleSubTackle',
             )
         ),
         'collision' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleCollision',
+                a::IDENTIFIER => 'handleCollision',
+                a::CLOSEPAREN => 'handleCollision',
+            )
+        ),
+        'subcollision' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleSubCollision',
+                a::CLOSEPAREN => 'handleSubCollision',
             )
         ),
         'foul' => array(
             'knowntokens' => array(
                 a::OPENPAREN => 'handleFoul',
+                a::CLOSEPAREN => 'handleFoul',
+            )
+        ),
+        'subfoul' => array(
+            'knowntokens' => array(
+                a::IDENTIFIER => 'handleSubFoul',
+                a::NUMBER => 'handleSubFoul',
+                a::CLOSEPAREN => 'handleSubFoul',
             )
         ),
         'see' => array(
@@ -654,6 +689,125 @@ class PlayerParser
         $this->tokenindex--; // discard value
     }
 
+    function handleFocus()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::FOCUS) {
+            return $this->senseBodyHelper(a::FOCUS, 'focus', __NAMESPACE__ . '\\Focus');
+        }
+        if ($a == a::OPENPAREN) {
+            $this->pushstate('subfocus');
+            $this->tokenindex--; // discard
+            return;
+        }
+    }
+
+    function handleSubFocus()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            $this->tokenindex--; // discard
+            return;
+        }
+        if ($a == a::TARGET || ($a == a::IDENTIFIER && $this->value() == 'count')) {
+            $this->tokenindex--; // discard
+            return;
+        }
+        // we are parsing the numbers and identifiers here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
+    function handleTackle()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::TACKLE) {
+            return $this->senseBodyHelper(a::TACKLE, 'tackle', __NAMESPACE__ . '\\Tackle');
+        }
+        if ($a == a::OPENPAREN) {
+            $this->pushstate('subtackle');
+            $this->tokenindex--; // discard
+            return;
+        }
+    }
+
+    function handleSubTackle()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            $this->tokenindex--; // discard
+            return;
+        }
+        if ($a == a::IDENTIFIER) {
+            $this->tokenindex--; // discard
+            return;
+        }
+        // we are parsing the numbers here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
+    function handleCollision()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::COLLISION) {
+            return $this->senseBodyHelper(a::COLLISION, 'collision', __NAMESPACE__ . '\\Collision');
+        }
+        if ($a == a::OPENPAREN) {
+            $this->pushstate('subcollision');
+            $this->tokenindex--; // discard
+            return;
+        }
+        // we are parsing the identifier "none" here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
+    function handleSubCollision()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            $this->tokenindex--; // discard
+            return;
+        }
+        // we are parsing the identifiers (ball) (player) (post) here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
+    function handleFoul()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN || $a == a::FOUL) {
+            return $this->senseBodyHelper(a::FOUL, 'foul', __NAMESPACE__ . '\\Foul');
+        }
+        if ($a == a::OPENPAREN) {
+            $this->pushstate('subfoul');
+            $this->tokenindex--; // discard
+            return;
+        }
+    }
+
+    function handleSubFoul()
+    {
+        $a = $this->token();
+        if ($a == a::CLOSEPAREN) {
+            $this->popstate();
+            $this->tokenindex--; // discard
+            return;
+        }
+        if ($this->value() == 'charged' || $this->value() == 'card') {
+            $this->tokenindex--; // discard
+            return;
+        }
+        // we are parsing the number and identifiers here
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard value
+    }
+
     function reduceSimpleTag()
     {
         $this->stack(-1)->addParam($this->stack());
@@ -685,4 +839,4 @@ $lex->debug = true;
 $parser = new PlayerParser();
 $parser->setup($lex);
 $ret = $parser->parse();
-var_dump($parser->getPlayerTypes());
+var_dump($ret);
