@@ -1,25 +1,5 @@
 <?php
 namespace ThroughBall;
-include __DIR__ . '/PlayerLexer.php';
-include __DIR__ . '/ServerParams.php';
-include __DIR__ . '/PlayerParams.php';
-include __DIR__ . '/PlayerTypes.php';
-include __DIR__ . '/PlayerType.php';
-include __DIR__ . '/Param.php';
-include __DIR__ . '/See.php';
-include __DIR__ . '/Item.php';
-include __DIR__ . '/SeenPlayer.php';
-include __DIR__ . '/BodyItem.php';
-include __DIR__ . '/SenseBody.php';
-include __DIR__ . '/Tackle.php';
-include __DIR__ . '/Arm.php';
-include __DIR__ . '/Collision.php';
-include __DIR__ . '/Focus.php';
-include __DIR__ . '/Foul.php';
-include __DIR__ . '/ViewMode.php';
-include __DIR__ . '/Stamina.php';
-include __DIR__ . '/Speed.php';
-include __DIR__ . '/Hear.php';
 use ThroughBall\PlayerLexer as a;
 class ParseException extends \Exception {}
 class PlayerParser
@@ -47,6 +27,7 @@ class PlayerParser
     function setup(PlayerLexer $lex)
     {
         $this->statestack = array();
+        $this->returns = array();
         $this->state = "initial";
         $this->lex = $lex;
         $this->lex->N = 0;
@@ -77,7 +58,7 @@ class PlayerParser
                                             $this->stateInformation[$this->state]['knowntokens'])));
             }
         }
-        return $this->tokenstack[0];
+        return $this->returns;
     }
 
     function pushstate($state)
@@ -145,9 +126,13 @@ class PlayerParser
             'knowntokens' => array(
                 a::OPENPAREN => 'handleTagOpen',
             ),
+            'reduce' => array(
+                'tag' => 'reduceTag',
+            )
         ),
         'tag' => array(
             'knowntokens' => array(
+                a::INIT => 'handleInit',
                 a::SERVERPARAM => 'handleServerParam',
                 a::PLAYERPARAM => 'handlePlayerParam',
                 a::PLAYERTYPE => 'handlePlayerType',
@@ -159,6 +144,13 @@ class PlayerParser
             'reduce' => array(
                 'player_type' => 'reducePlayerType'
             )
+        ),
+        'init' => array(
+            'knowntokens' => array(
+                a::CLOSEPAREN => 'handleInit',
+                a::IDENTIFIER => 'handleInit',
+                a::NUMBER => 'handleInit',
+            ),
         ),
         'server_param' => array(
             'knowntokens' => array(
@@ -391,6 +383,21 @@ class PlayerParser
         $this->popstate();
         $this->tokenindex--;
         return;
+    }
+
+    function handleInit()
+    {
+        if ($this->token() == a::CLOSEPAREN) {
+            $this->popstate(); // return to previous state
+            return;
+        }
+        if ($this->token() == a::INIT) {
+            $param = new namespace\Init;
+            $this->replace($param);
+            $this->pushstate('init');
+        }
+        $this->stack(-1)->setValue($this->value());
+        $this->tokenindex--; // discard
     }
 
     function handleServerParam()
@@ -786,6 +793,11 @@ class PlayerParser
         }
         $this->stack(-1)->setValue($this->value());
         $this->tokenindex--; // discard
+    }
+
+    function reduceTag()
+    {
+        $this->returns[] = $this->r();
     }
 
     function reduceSimpleTag()

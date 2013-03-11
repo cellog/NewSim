@@ -1,7 +1,8 @@
 <?php
-include 'UDP.php';
-include 'Player.php';
-include 'UDPManager.php';
+function __autoload($class)
+{
+    include __DIR__ . '/' . str_replace('ThroughBall\\', '', $class) . '.php';
+}
 $manager = new ThroughBall\Util\UDPManager('testing');
 $opponent = new ThroughBall\Util\UDPManager('opponent');
 
