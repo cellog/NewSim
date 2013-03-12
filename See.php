@@ -18,4 +18,9 @@ class See
     {
         return $this->items[$name];
     }
+
+    function reset()
+    {
+        $this->items = array();
+    }
 }

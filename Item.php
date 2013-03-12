@@ -9,7 +9,8 @@ class Item {
         'distancedelta',
         'directiondelta',
         'bodydirection',
-        'headdirection'
+        'headdirection',
+        'pointingdirection',
     );
     protected $params = array(
         'distance' => false,
@@ -17,7 +18,8 @@ class Item {
         'distancedelta' => false,
         'directiondelta' => false,
         'bodydirection' => false,
-        'headdirection' => false
+        'headdirection' => false,
+        'pointingdirection' => false,
     );
     function setName($name)
     {
@@ -26,7 +28,7 @@ class Item {
 
     function setValue($value)
     {
-        $this->params[$this->paramnames[$this->currentparam++]] = $value + 0;
+        $this->params[$this->paramnames[$this->currentparam++]] = $value;
     }
 
     function getName()

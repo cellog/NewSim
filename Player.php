@@ -8,6 +8,7 @@ class Player extends UDP
     protected $side;
     protected $playmode;
     protected $parser;
+    protected $seeparser;
     protected $lexer;
     protected $serverparams;
     protected $playerparams;
@@ -15,7 +16,7 @@ class Player extends UDP
     protected $sensebody;
     protected $see;
     protected $commands = array();
-    protected $debug = false;
+    protected $debug = true;
     protected $lexdebug = false;
     protected $cycle = 0;
     protected $lastcycle = -1;
@@ -25,6 +26,8 @@ class Player extends UDP
         $this->isgoalie = (bool) $isgoalie;
         $this->parser = new PlayerParser;
         $this->lexer = new PlayerLexer;
+        $this->seeparser = new SeeParser($this->debug);
+        $this->see = new See;
     }
 
     function getInitString()
@@ -38,14 +41,21 @@ class Player extends UDP
         if ($this->debug) {
             echo "parsing \"$string\"\n";
         }
-        $logger = null;
-        if ($this->lexdebug) {
-            $logger = new Logger;
-        }
-        $this->lexer->setup($string, $logger);
-        $this->parser->setup($this->lexer);
-        $info = $this->parser->parse();
-        foreach ($info as $tag) {
+        $string = explode("\x00", $string);
+        foreach ($string as $str) {
+            if (!$str) continue;
+            if (substr($str, 0, 4) == '(see') {
+                $tag = $this->seeparser->parse($str, $this->see);
+            } else {
+                $logger = null;
+                if ($this->lexdebug) {
+                    $logger = new Logger;
+                }
+                $this->lexer->setup($str, $logger);
+                $this->parser->setup($this->lexer);
+                $tag = $this->parser->parse();
+                $tag = $tag[0];
+            }
             if ($tag instanceof SenseBody) {
                 $this->handleSenseBody($tag);
             } elseif ($tag instanceof See) {
