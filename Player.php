@@ -15,9 +15,10 @@ class Player extends UDP
     protected $sensebody;
     protected $see;
     protected $commands = array();
-    protected $debug = true;
+    protected $debug = false;
     protected $lexdebug = false;
     protected $cycle = 0;
+    protected $lastcycle = -1;
     function __construct($team, $isgoalie = false, $host = '127.0.0.1', $port = 6000)
     {
         parent::__construct($team, $host, $port);
@@ -64,21 +65,23 @@ class Player extends UDP
                 throw $tag;
             }
         }
-        if (isset($this->commands[$this->cycle])) {
-            foreach ($this->commands[$this->cycle] as $command) {
-                if ($this->debug) {
-                    echo "sending ",$command,"\n";
-                }
-                $this->send($command);
+        if ($this->lastcycle != $this->cycle && count($this->commands)) {
+            $command = array_shift($this->commands);
+            // turn_neck can happen at the same time as another command
+            if (-1 == strpos($command, 'turn_neck')) {
+                $this->lastcycle = $this->cycle;
             }
-            unset($this->commands[$this->cycle]);
+            if ($this->debug) {
+                echo "sending ",$command,"\n";
+            }
+            $this->send($command);
         }
         
     }
 
     function queueCommand($cycle, $command)
     {
-        $this->commands[$cycle][] = $command . "\x00";
+        $this->commands[] = $command . "\x00";
     }
 
     function handleSenseBody($sensebody)
@@ -114,6 +117,16 @@ class Player extends UDP
         return false;
     }
 
+    function opponentGoal()
+    {
+        return $this->side == 'l' ? '(g r)' : '(g l)';
+    }
+
+    function ownGoal()
+    {
+        return $this->side == 'r' ? '(g r)' : '(g l)';
+    }
+
     function opponent()
     {
         return $this->side == 'l' ? 'r' : 'l';
@@ -137,6 +150,11 @@ class Player extends UDP
             $this->moveCycle = $this->cycle;
         }
         $this->queueCommand($this->moveCycle++, '(dash ' . $speed . ' ' . $direction . ')');
+    }
+
+    function turnTowards($item)
+    {
+        $this->turn($item->direction);
     }
 
     protected $turnCycle = 0;

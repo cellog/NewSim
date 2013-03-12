@@ -426,7 +426,7 @@ class PlayerParser
     {
         if ($this->token() == a::CLOSEPAREN) {
             $this->popstate(); // return to previous state
-            return;
+            return true;
         }
         if ($this->token() == a::INIT) {
             $param = new namespace\Init;
