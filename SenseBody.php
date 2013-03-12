@@ -18,4 +18,9 @@ class SenseBody
     {
         return $this->time;
     }
+
+    function getParam($name)
+    {
+        return $this->items[$name];
+    }
 }

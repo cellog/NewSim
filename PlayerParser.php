@@ -329,6 +329,7 @@ class PlayerParser
                 a::NUMBER => 'handleSeeItem',
                 a::REALNUMBER => 'handleSeeItem',
                 a::QUOTEDSTRING => 'handleSeeItem',
+                a::IDENTIFIER => 'handleSeeItem',
                 a::CLOSEPAREN => 'handleSeeItem',
                 a::OPENPAREN => 'handlePlayer'
             )
@@ -337,6 +338,7 @@ class PlayerParser
             'knowntokens' => array(
                 a::PLAYER => 'handlePlayer',
                 a::QUOTEDSTRING => 'handlePlayer',
+                a::IDENTIFIER => 'handlePlayer',
                 a::NUMBER => 'handlePlayer',
                 a::GOALIE => 'handlePlayer',
                 a::CLOSEPAREN => 'handlePlayer'
@@ -552,6 +554,16 @@ class PlayerParser
         $a = $this->token();
         if ($a == a::QUOTEDSTRING || $a == a::NUMBER || $a == a::REALNUMBER) {
             $this->stack(-1)->setValue($this->value());
+            $this->tokenindex--;
+            return;
+        }
+        if ($a == a::IDENTIFIER) {
+            // this happens for t and k in a player that is kicking/tackling only
+            if ($this->value() == 'k') {
+                $this->stack(-1)->setIskicking();
+            } else {
+                $this->stack(-1)->setIsTackling();
+            }
             $this->tokenindex--;
             return;
         }

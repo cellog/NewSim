@@ -106,6 +106,19 @@ class Player extends UDP
         }
     }
 
+    function isKickable(Item $ball)
+    {
+        if ($ball->distance < 0.7) {
+            return true;
+        }
+        return false;
+    }
+
+    function opponent()
+    {
+        return $this->side == 'l' ? 'r' : 'l';
+    }
+
     function move($x, $y)
     {
         if ($cycle != 0) {
@@ -133,5 +146,14 @@ class Player extends UDP
             $this->turnCycle = $this->cycle;
         }
         $this->queueCommand($this->turnCycle++, '(turn ' . $angle . ')');
+    }
+
+    protected $kickCycle = 0;
+    function kick($power, $direction)
+    {
+        if ($this->kickCycle < $this->cycle) {
+            $this->kickCycle = $this->cycle;
+        }
+        $this->queueCommand($this->kickCycle++, '(kick ' . $power . ' ' . $direction . ')');
     }
 }

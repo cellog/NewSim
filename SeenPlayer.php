@@ -4,6 +4,8 @@ class SeenPlayer extends Item {
     protected $team;
     protected $unum;
     protected $isgoalie = false;
+    protected $iskicking = false;
+    protected $istackling = false;
 
     function setTeam($team)
     {
@@ -18,6 +20,16 @@ class SeenPlayer extends Item {
     function setIsgoalie()
     {
         $this->isgoalie = true;
+    }
+
+    function setIsKicking()
+    {
+        $this->iskicking = true;
+    }
+
+    function setIsTackling()
+    {
+        $this->istackling = true;
     }
 
     function getName()
