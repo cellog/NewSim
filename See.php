@@ -14,6 +14,11 @@ class See
         $this->time = $time;
     }
 
+    function getTime()
+    {
+        return $this->time;
+    }
+
     function getItem($name)
     {
         return $this->items[$name];

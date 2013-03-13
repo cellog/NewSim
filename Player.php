@@ -9,6 +9,7 @@ class Player extends UDP
     protected $playmode;
     protected $parser;
     protected $seeparser;
+    protected $bodyparser;
     protected $lexer;
     protected $serverparams;
     protected $playerparams;
@@ -16,7 +17,7 @@ class Player extends UDP
     protected $sensebody;
     protected $see;
     protected $commands = array();
-    protected $debug = true;
+    protected $debug = false;
     protected $lexdebug = false;
     protected $cycle = 0;
     protected $lastcycle = -1;
@@ -27,7 +28,9 @@ class Player extends UDP
         $this->parser = new PlayerParser;
         $this->lexer = new PlayerLexer;
         $this->seeparser = new SeeParser($this->debug);
+        $this->bodyparser = new SenseBodyParser($this->debug);
         $this->see = new See;
+        $this->sensebody = new SenseBody;
     }
 
     function getInitString()
@@ -46,6 +49,8 @@ class Player extends UDP
             if (!$str) continue;
             if (substr($str, 0, 4) == '(see') {
                 $tag = $this->seeparser->parse($str, $this->see);
+            } elseif (substr($str, 0, 4) == '(sen') {
+                $tag = $this->bodyparser->parse($str, $this->sensebody);
             } else {
                 $logger = null;
                 if ($this->lexdebug) {
@@ -97,7 +102,6 @@ class Player extends UDP
     function handleSenseBody($sensebody)
     {
         $this->sensebody = $sensebody;
-        $this->cycle = $sensebody->getTime();
         if ($this->debug) {
             echo "sense body ", $this->unum, "\n";
         }
@@ -106,6 +110,7 @@ class Player extends UDP
     function handleSee($see)
     {
         $this->see = $see;
+        $this->cycle = $see->getTime();
         if ($this->debug) {
             echo "see ", $this->unum, "\n";
         }

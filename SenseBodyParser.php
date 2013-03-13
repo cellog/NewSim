@@ -1,59 +1,58 @@
 <?php
 namespace ThroughBall;
-class SeeParser {
+include __DIR__ . '/SenseBody.php';
+class SenseBodyParser {
     private $debug;
     function __construct($debug)
     {
         $this->debug = $debug;
     }
-    function parse($see, See $seen)
+    function parse($sb, SenseBody $body)
     {
-        $count = substr($see, 5, strpos($see, '(', 1) - 6) + 0;
-        $see = substr($see, strpos($see, '(', 1));
-        if (preg_match_all('/\('
-                        . '('
-                        . '\(g [lr]\)'
-                        . '|'
-                        . '\([bBPFG]\)'
-                        . '|'
-                        . '\(p "([\-_a-zA-Z0-9]+)" (\d+)(?: (goalie))?\)'
-                        . '|'
-                        . '\(f [pg] [lcr] [tcb]\)'
-                        . '|'
-                        . '\(f [lcrtb] [tb0]\)'
-                        . '|'
-                        . '\(f [tblr] [tblr] [1-5]0\)'
-                        . '|'
-                        . '\(f c\)'
-                        . '|'
-                        . '\(l [btlr]\)'
-                        . ')'
-                        . ' (-?\d+(?:\.\d+)?(?:e-?\d+)?) (-?\d+(?:\.\d+)?(?:e-?\d+)?)(?: (-?\d+(?:\.\d+)?(?:e-?\d+)?))?(?: (-?\d+(?:\.\d+)?(?:e-?\d+)?))?(?: (-?\d+(?:\.\d+)?(?:e-?\d+)?))?(?: (-?\d+(?:\.\d+)?(?:e-?\d+)?))?(?: (-?\d+(?:\.\d+)?(?:e-?\d+)?))?(?: ([tk]))?'
-                        . '\)/'
-                        , $see, $matches)) {
-            $seen->reset();
-            $seen->setTime($count);
-            for ($i = 0; $i < count($matches[0]);$i++) {
-                if ($matches[2][$i]) {
-                    $item = new SeenPlayer;
-                    $item->setTeam($matches[2][$i]);
-                    $item->setUnum($matches[3][$i]);
-                    if ($matches[4][$i]) $item->setIsgoalie();
-                    if ($matches[12][$i]) {
-                        $matches[12][$i] == 'k' ? $item->setIsKicking() : $item->setIsTackling();
-                    }
-                } else {
-                    $item = new Item;
-                    $item->setName($matches[1][$i]);
-                }
-                for ($j = 5; $j < 12; $j++) {
-                    $item->setValue($matches[$j][$i]);
-                }
-                $seen->addItem($item);
-            }
+        $count = substr($sb, 12, strpos($sb, '(', 1) - 13) + 0;
+        $sb = substr($sb, strpos($sb, '(', 1));
+        if (preg_match('/'
+                            . '\(view_mode (high|low) (narrow|normal|high)\)'
+                            . ' '
+                            . '\(stamina (\d+(?:\.\d+)?(?:e-?\d+)?) (\d+(?:\.\d+)?(?:e-?\d+)?) (\d+(?:\.\d+)?(?:e-?\d+)?)\)'
+                            . ' '
+                            . '\(speed (\d+(?:\.\d+)?(?:e-?\d+)?) (\-?\d+)\)'
+                            . ' '
+                            . '\(head_angle (\d+)\)'
+                            . ' '
+                            . '\(kick (\d+)\)'
+                            . ' '
+                            . '\(dash (\d+)\)'
+                            . ' '
+                            . '\(turn (\d+)\)'
+                            . ' '
+                            . '\(say (\d+)\)'
+                            . ' '
+                            . '\(turn_neck (\d+)\)'
+                            . ' '
+                            . '\(catch (\d+)\)'
+                            . ' '
+                            . '\(move (\d+)\)'
+                            . ' '
+                            . '\(change_view (\d+)\)'
+                            . ' '
+                            . '\(arm \(movable (\d+)\) \(expires (\d+)\) \(target (\d+(?:\.\d+)?(?:e-?\d+)?) (\-?\d+)\) \(count (\d+)\)\)'
+                            . ' '
+                            . '\(focus \(target (none|l \d+|r \d+)\) \(count (\d+)\)\)'
+                            . ' '
+                            . '\(tackle \(expires (\d+)\) \(count (\d+)\)\)'
+                            . ' '
+                            . '\(collision (none|\(ball\)|\(player\)|\(post\)|\(ball\) \(player\)|\(ball\) \(post\)|\(player\) \(post\)|\(ball\) \(player\) \(post\))\)'
+                            . ' '
+                            . '\(foul  \(charged (\d+)\) \(card (none|yellow|red)\)\)'
+                            . '/'
+                            , $sb, $matches)) {
+            $body->setParams($matches);
         } else {
-            throw new \Exception('could not parse ' . $see);
+            throw new \Exception('could not parse ' . $sb);
         }
-        return $seen;
+        return $body;
     }
 }
+$a = new SenseBodyParser(true);
+$a->parse('(sense_body 173 (view_mode high normal) (stamina 8000 1 124060) (speed 0 130) (head_angle 0) (kick 2) (dash 109) (turn 7) (say 0) (turn_neck 0) (catch 0) (move 1) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision (player)) (foul  (charged 0) (card none)))', new SenseBody);
