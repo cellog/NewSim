@@ -13,15 +13,15 @@ class Tester extends ThroughBall\Player {
         if (!$this->cycle) return;
         $goal = $see->getItem($this->ownGoal());
         if ($goal) {
-            $this->mygoaldirection = $goal->direction;
+            $this->mygoaldirection = $goal['direction'];
             $this->visiblegoal = $this->side;
-            echo $this->team, " ", $this->side, " see own ", $this->ownGoal(), " goal ", $goal->direction, "\n";
+            echo $this->team, " ", $this->side, " see own ", $this->ownGoal(), " goal ", $goal['direction'], "\n";
         }
         $goal = $see->getItem($this->opponentGoal());
         if ($goal) {
-            $this->goaldirection = $goal->direction;
+            $this->goaldirection = $goal['direction'];
             $this->visiblegoal = $this->opponent();
-            echo $this->team, " ", $this->side, " see opponent ", $this->opponentGoal(), " goal ", $goal->direction, "\n";
+            echo $this->team, " ", $this->side, " see opponent ", $this->opponentGoal(), " goal ", $goal['direction'], "\n";
         }
         $ball = $see->getItem('(b)');
         if ($ball) {

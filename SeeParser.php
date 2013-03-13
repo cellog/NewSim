@@ -33,24 +33,13 @@ class SeeParser {
                         , $see, $matches)) {
             $seen->reset();
             $seen->setTime($count);
+            $items = array();
             for ($i = 0; $i < count($matches[0]);$i++) {
-                if ($matches[2][$i]) {
-                    $item = new SeenPlayer;
-                    $item->setTeam($matches[2][$i]);
-                    $item->setUnum($matches[3][$i]);
-                    if ($matches[4][$i]) $item->setIsgoalie();
-                    if ($matches[12][$i]) {
-                        $matches[12][$i] == 'k' ? $item->setIsKicking() : $item->setIsTackling();
-                    }
-                } else {
-                    $item = new Item;
-                    $item->setName($matches[1][$i]);
+                for ($j = 2; $j < 12; $j++) {
+                    $items[$matches[1][$i]][] = $matches[$j][$i];
                 }
-                for ($j = 5; $j < 12; $j++) {
-                    $item->setValue($matches[$j][$i]);
-                }
-                $seen->addItem($item);
             }
+            $seen->setParams($items);
         } else {
             throw new \Exception('could not parse ' . $see);
         }

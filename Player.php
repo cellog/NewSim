@@ -94,7 +94,7 @@ class Player extends UDP
         
     }
 
-    function queueCommand($cycle, $command)
+    function queueCommand($command)
     {
         $this->commands[] = $command . "\x00";
     }
@@ -124,9 +124,9 @@ class Player extends UDP
         }
     }
 
-    function isKickable(Item $ball)
+    function isKickable(array $ball)
     {
-        if ($ball->distance < 0.7) {
+        if ($ball['distance'] < 0.7) {
             return true;
         }
         return false;
@@ -152,41 +152,29 @@ class Player extends UDP
         if ($cycle != 0) {
             return;
         }
-        $this->queueCommand(0, '(move ' . $x . ' ' . $y . ')');
+        $this->queueCommand('(move ' . $x . ' ' . $y . ')');
     }
 
-    protected $moveCycle = 0;
     function moveTowards($item, $speed = 100)
     {
-        if ($item instanceof Item) {
-            $direction = $item->direction;
+        if (is_array($item)) {
+            $direction = $item['direction'];
         }
-        if ($this->moveCycle < $this->cycle) {
-            $this->moveCycle = $this->cycle;
-        }
-        $this->queueCommand($this->moveCycle++, '(dash ' . $speed . ' ' . $direction . ')');
+        $this->queueCommand('(dash ' . $speed . ' ' . $direction . ')');
     }
 
     function turnTowards($item)
     {
-        $this->turn($item->direction);
+        $this->turn($item['direction']);
     }
 
-    protected $turnCycle = 0;
     function turn($angle)
     {
-        if ($this->turnCycle < $this->cycle) {
-            $this->turnCycle = $this->cycle;
-        }
-        $this->queueCommand($this->turnCycle++, '(turn ' . $angle . ')');
+        $this->queueCommand('(turn ' . $angle . ')');
     }
 
-    protected $kickCycle = 0;
     function kick($power, $direction)
     {
-        if ($this->kickCycle < $this->cycle) {
-            $this->kickCycle = $this->cycle;
-        }
-        $this->queueCommand($this->kickCycle++, '(kick ' . $power . ' ' . $direction . ')');
+        $this->queueCommand('(kick ' . $power . ' ' . $direction . ')');
     }
 }
