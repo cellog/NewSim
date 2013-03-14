@@ -3,6 +3,10 @@ function __autoload($class)
 {
     include __DIR__ . '/' . substr($class, strrpos($class, '\\')+1) . '.php';
 }
+
+$manager = new ThroughBall\Util\UDPManager('testing');
+$opponent = new ThroughBall\Util\UDPManager('opponent');
+
 class Tester extends ThroughBall\Player {
     protected $goaldirection = 0;
     protected $mygoaldirection = 0;
@@ -10,6 +14,7 @@ class Tester extends ThroughBall\Player {
     function handleSee($see)
     {
         parent::handleSee($see);
+        var_export($this->getCoordinates());
         if (!$this->cycle) return;
         $goal = $see->getItem($this->ownGoal());
         if ($goal) {
@@ -42,18 +47,16 @@ class Tester extends ThroughBall\Player {
     }
 }
 
-$manager = new ThroughBall\Util\UDPManager('testing');
-$opponent = new ThroughBall\Util\UDPManager('opponent');
 
 //$goalie = $manager->addGoalie();
 $player1 = $manager->addPlayer('Tester');
 //$player2 = $manager->addPlayer('Tester');
 
 //$goalie = $opponent->addGoalie();
-$player = $opponent->addPlayer('Tester');
+//$player = $opponent->addPlayer('Tester');
 //$player3 = $opponent->addPlayer('Tester');
 
-$player->move(-10, 10);
+//$player->move(-10, 10);
 $player1->move(-10, 10);
 //$player2->move(-20, 20);
 //$player3->move(-30, 30);

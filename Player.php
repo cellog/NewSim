@@ -21,6 +21,68 @@ class Player extends UDP
     protected $lexdebug = false;
     protected $cycle = 0;
     protected $lastcycle = -1;
+    protected $knownLocations = array(
+        '(f c)' => array(0, 0),
+        '(f c b)' => array(0, 34),
+        '(f c t)' => array(0, -34),
+        '(f g l b)' => array(-52.5, 7),
+        '(g l)' => array(-52.5, 0),
+        '(f g l t)' => array(-52.5, -7),
+        '(f g r b)' => array(52.5, 7),
+        '(g r)' => array(52.5, 0),
+        '(f g r t)' => array(52.5, -7),
+        '(f l b)' => array(-52.5, 34),
+        '(f l t)' => array(-52.5, -34),
+        '(f r b)' => array(52.5, 34),
+        '(f r t)' => array(52.5, -34),
+        '(f p l c)' => array(-36, 0),
+        '(f p l b)' => array(-36, 20),
+        '(f p l t)' => array(-36, -20),
+        '(f p r c)' => array(36, 0),
+        '(f p r b)' => array(36, 20),
+        '(f p r t)' => array(36, -20),
+
+        '(f t l 50)' => array(40, -39),
+        '(f t l 40)' => array(40, -39),
+        '(f t l 30)' => array(30, -39),
+        '(f t l 20)' => array(20, -39),
+        '(f t l 10)' => array(10, -39),
+        '(f t 0)' => array(0, -39),
+        '(f t l 10)' => array(-10, -39),
+        '(f t l 20)' => array(-20, -39),
+        '(f t l 30)' => array(-30, -39),
+        '(f t l 40)' => array(-40, -39),
+        '(f t l 50)' => array(-40, -39),
+
+        '(f l t 30)' => array(-57.5, -30),
+        '(f l t 20)' => array(-57.5, -20),
+        '(f l t 10)' => array(-57.5, -10),
+        '(f l 0)' => array(-57.5, 0),
+        '(f l b 10)' => array(-57.5, 10),
+        '(f l b 20)' => array(-57.5, 20),
+        '(f l b 30)' => array(-57.5, 30),
+
+        '(f b l 50)' => array(40, 39),
+        '(f b l 40)' => array(40, 39),
+        '(f b l 30)' => array(30, 39),
+        '(f b l 20)' => array(20, 39),
+        '(f b l 10)' => array(10, 39),
+        '(f b 0)' => array(0, 39),
+        '(f b l 10)' => array(-10, 39),
+        '(f b l 20)' => array(-20, 39),
+        '(f b l 30)' => array(-30, 39),
+        '(f b l 40)' => array(-40, 39),
+        '(f b l 50)' => array(-40, 39),
+
+
+        '(f r t 30)' => array(57.5, -30),
+        '(f r t 20)' => array(57.5, -20),
+        '(f r t 10)' => array(57.5, -10),
+        '(f r 0)' => array(57.5, 0),
+        '(f r b 10)' => array(57.5, 10),
+        '(f r b 20)' => array(57.5, 20),
+        '(f r b 30)' => array(57.5, 30),
+    );
     function __construct($team, $isgoalie = false, $host = '127.0.0.1', $port = 6000)
     {
         parent::__construct($team, $host, $port);
@@ -102,6 +164,7 @@ class Player extends UDP
     function handleSenseBody($sensebody)
     {
         $this->sensebody = $sensebody;
+        $this->cycle = $sensebody->getTime();
         if ($this->debug) {
             echo "sense body ", $this->unum, "\n";
         }
@@ -110,7 +173,6 @@ class Player extends UDP
     function handleSee($see)
     {
         $this->see = $see;
-        $this->cycle = $see->getTime();
         if ($this->debug) {
             echo "see ", $this->unum, "\n";
         }
@@ -130,6 +192,122 @@ class Player extends UDP
             return true;
         }
         return false;
+    }
+
+    function toAbsoluteCoordinates($x, $y = null)
+    {
+        if (is_array($x)) {
+            $y = $x[1];
+            $x = $x[0];
+        }
+        return array($x + 57.5, 39 - $y);
+    }
+
+    function toRelativeCoordinates($x, $y = null)
+    {
+        if (is_array($x)) {
+            $y = $x[1];
+            $x = $x[0];
+        }
+        return array($x - 57.5, 39 - $y);
+    }
+
+    function getCoordinates()
+    {
+        $params = $this->see->listSeenItems();
+        if (!count($params)) {
+            return false;
+        }
+        // check for flags
+        $found = array();
+        $far = array();
+        $near = array();
+        foreach ($params as $param) {
+            if (isset($this->knownLocations[$param])) {
+                $seen = $this->see->getItem($param);
+                $found[$param] = array($seen,
+                                       $this->toAbsoluteCoordinates($this->knownLocations[$param]));
+                if ($seen['distance'] < 20) {
+                    // these will be more accurate
+                    $near[$param] = $found[$param];
+                    if (count($near) >= 2) {
+                        // this is enough for certainty
+                        $far = array();
+                        break;
+                    }
+                } else {
+                    $far[$param] = $found[$param];
+                }
+            }
+        }
+        $calcx = array();
+        $calcy = array();
+        $results = array();
+        foreach (array('near' => $near, 'far' => $far) as $name => $found) {
+            foreach ($found as $param => $info) {
+                // solve the right triangle to determine cartesian distance to the object
+                // first calculate the other angle
+                $A = $info[0]['direction'];
+                if (!$A) {
+                    // we are level with this landmark
+                    $calcx[] = $info[1][0] - $info[0]['distance'];
+                    $calcy[] = $info[1][1];
+                    continue;
+                }
+                if ($A < 0) {
+                    $A = 0 - $A; // make it positive
+                    $negateY = true;
+                    if ($A < 90) {
+                        $negateX = true;
+                    } else {
+                        $negateX = false;
+                    }
+                } else {
+                    $negateY = false;
+                    if ($A < 90) {
+                        $negateX = true;
+                    } else {
+                        $negateX = false;
+                    }
+                }
+                $B = 90;
+                $C = 90 - $A; // angles must add up to 180 in a triangle
+    
+                // next use the law of sines a/sin A = b/sin B = c/sin C
+                // sin of 90 is 1 so b/sin B = distance/1 = distance (convenient!)
+                // so a/sin A = b, a = bsinA = distance*sin A
+                $b = $info[0]['distance'];
+                $a = $info[0]['distance']*sin(deg2rad($A));
+                $c = $info[0]['distance']*sin(deg2rad($C));
+                if ($negateY) {
+                    $a = -$a;
+                }
+                if ($negateX) {
+                    $b = -$b;
+                }
+                $calcy[] = $info[1][1] + $a;
+                $calcx[] = $info[1][0] + $b;
+            }
+            // now to help eliminate the random error, average everything
+            if (count($calcx)) {
+                $x = array_sum($calcx)/count($calcx);
+            }
+            if (count($calcy)) {
+                $y = array_sum($calcy)/count($calcy);
+            }
+            if (count($calcx)) {
+                $results[$name] = array($x, $y);
+            }
+        }
+        if (isset($results['near']) && !isset($results['far'])) {
+            return $results['near'];
+        }
+        if (!isset($results['near'])) {
+            return $results['far'];
+        }
+        // bias towards near results
+        return array(.7 * $results['near'][0] + .3 * $results['far'][0],
+                     .7 * $results['near'][1] + .3 * $results['far'][1]);
     }
 
     function opponentGoal()
@@ -178,3 +356,4 @@ class Player extends UDP
         $this->queueCommand('(kick ' . $power . ' ' . $direction . ')');
     }
 }
+

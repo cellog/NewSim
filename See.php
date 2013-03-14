@@ -88,6 +88,11 @@ class See
         return $ret;
     }
 
+    function listSeenItems()
+    {
+        return array_keys($this->items);
+    }
+
     function getItem($name)
     {
         if (isset($this->items[$name])) {

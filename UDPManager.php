@@ -10,6 +10,7 @@ class UDPManager
         $this->team = $team;
     }
     static protected $objects = array();
+
     function addObject(UDP $connection)
     {
         $connection->init();

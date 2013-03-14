@@ -1,6 +1,5 @@
 <?php
 namespace ThroughBall;
-include __DIR__ . '/SenseBody.php';
 class SenseBodyParser {
     private $debug;
     function __construct($debug)
@@ -54,5 +53,3 @@ class SenseBodyParser {
         return $body;
     }
 }
-$a = new SenseBodyParser(true);
-$a->parse('(sense_body 173 (view_mode high normal) (stamina 8000 1 124060) (speed 0 130) (head_angle 0) (kick 2) (dash 109) (turn 7) (say 0) (turn_neck 0) (catch 0) (move 1) (change_view 0) (arm (movable 0) (expires 0) (target 0 0) (count 0)) (focus (target none) (count 0)) (tackle (expires 0) (count 0)) (collision (player)) (foul  (charged 0) (card none)))', new SenseBody);
