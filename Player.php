@@ -333,6 +333,11 @@ class Player extends UDP
         $this->queueCommand('(move ' . $x . ' ' . $y . ')');
     }
 
+    function realDirection($angle)
+    {
+        return $angle + $this->sensebody->getParam('direction') + $this->sensebody->getParam('head_angle');
+    }
+
     function moveTowards($item, $speed = 100)
     {
         if (is_array($item)) {
@@ -354,6 +359,13 @@ class Player extends UDP
     function kick($power, $direction)
     {
         $this->queueCommand('(kick ' . $power . ' ' . $direction . ')');
+    }
+
+    function shoot()
+    {
+        $goal = $this->see->getItem($this->opponentGoal());
+        if (!$goal) return;
+        $this->kick(100, $goal['direction']);
     }
 }
 

@@ -9,6 +9,7 @@ class SenseBodyParser {
     function parse($sb, SenseBody $body)
     {
         $count = substr($sb, 12, strpos($sb, '(', 1) - 13) + 0;
+        $body->setTime($count);
         $sb = substr($sb, strpos($sb, '(', 1));
         if (preg_match('/'
                             . '\(view_mode (high|low) (narrow|normal|high)\)'

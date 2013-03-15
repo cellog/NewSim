@@ -10,6 +10,10 @@ class SeeParser {
     {
         $count = substr($see, 5, strpos($see, '(', 1) - 6) + 0;
         $see = substr($see, strpos($see, '(', 1));
+        if ($see == ')') {
+            $seen->setTime($count);
+            $seen->setParams(array());
+        }
         if (preg_match_all('/\('
                         . '('
                         . '\(g [lr]\)'
