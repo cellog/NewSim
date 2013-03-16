@@ -16,6 +16,7 @@ class Player extends UDP
     protected $playertypes;
     protected $sensebody;
     protected $see;
+    protected $bodydirection = 0;
     protected $commands = array();
     protected $debug = false;
     protected $lexdebug = false;
@@ -143,7 +144,7 @@ class Player extends UDP
             }
         }
         if ($this->lastcycle != $this->cycle && count($this->commands)) {
-            $command = array_shift($this->commands);
+            list($command, $callback) = array_shift($this->commands);
             // turn_neck can happen at the same time as another command
             if (-1 == strpos($command, 'turn_neck')) {
                 $this->lastcycle = $this->cycle;
@@ -152,19 +153,25 @@ class Player extends UDP
                 echo "sending ",$command,"\n";
             }
             $this->send($command);
+            if (is_callable($callback)) {
+                call_user_func($callback);
+            }
         }
         
     }
 
-    function queueCommand($command)
+    function queueCommand($command, $callback = null)
     {
-        $this->commands[] = $command . "\x00";
+        $this->commands[] = array($command . "\x00", $callback);
     }
 
     function handleSenseBody($sensebody)
     {
         $this->sensebody = $sensebody;
         $this->cycle = $sensebody->getTime();
+        if (!$sensebody->getParam('speed')) {
+            $this->bodydirection = $sensebody->getParam('direction');
+        }
         if ($this->debug) {
             echo "sense body ", $this->unum, "\n";
         }
@@ -370,7 +377,17 @@ class Player extends UDP
 
     function turn($angle)
     {
-        $this->queueCommand('(turn ' . $angle . ')');
+        $self = $this;
+        $this->queueCommand('(turn ' . $angle . ')',
+                            function() use ($angle, $self) {$self->updateDirection($angle);});
+    }
+
+    function updateDirection($angle)
+    {
+        if ($this->bodydirection + $angle >= 2*$this->bodydirection) {
+            return;
+        }
+        $this->bodydirection += $angle;
     }
 
     function kick($power, $direction)
@@ -397,7 +414,7 @@ class Player extends UDP
         $c = sqrt($hypa*$hypa + $b*$b);
         // simple formula: use atan(opposite/adjacent) to get the angle
         $dir = $this->sensebody->getParam('head_angle') -
-             $this->sensebody->getParam('direction');
+             $this->bodydirection;
         $dir = 0;
         $B = -(rad2deg(atan2($a, $b)) - $dir);
         return array('direction' => $B, 'distance' => $c);

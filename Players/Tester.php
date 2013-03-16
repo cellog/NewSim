@@ -9,7 +9,7 @@ class Tester extends Player {
     {
         static $foo = false;
         parent::handleSenseBody($sensebody);
-        echo "body direction ", $sensebody->getParam('direction'), "\n";
+        echo "body direction ", $this->bodydirection, "\n";
         $g = $this->getGoalDirection();
         if (!$this->cycle) return;
         $see = $this->see;
@@ -22,7 +22,7 @@ class Tester extends Player {
         if ($ball) {
             if ($this->isKickable($ball)) {
                 echo "ball kickable dist ", $g['distance'], ' dir ', $g['direction'], ' ',
-                    $this->sensebody->getParam('direction'), "\n";
+                    $this->bodydirection, "\n";
                 if ($g['distance'] > 70) {
                     $this->shoot($goal['direction']);
                     return;
@@ -30,6 +30,7 @@ class Tester extends Player {
                 } else {
                     if ($g['direction'] > 5) {
                         $this->turn($g['direction']/2);
+                        return;
                     }
                     if ($goal['distance'] < 20) {
                         $this->shoot($goal['direction']);
