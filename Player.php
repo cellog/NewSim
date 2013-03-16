@@ -250,6 +250,9 @@ class Player extends UDP
         $calcy = array();
         $results = array();
         foreach (array('near' => $near, 'far' => $far) as $name => $found) {
+            if (!count($found)) {
+                continue;
+            }
             foreach ($found as $param => $info) {
                 // solve the right triangle to determine cartesian distance to the object
                 // first calculate the other angle
@@ -373,6 +376,37 @@ class Player extends UDP
     function kick($power, $direction)
     {
         $this->queueCommand('(kick ' . $power . ' ' . $direction . ')');
+    }
+
+    function getGoalDirection()
+    {
+        $coords = $this->getCoordinates();
+        $goal = $this->toAbsoluteCoordinates($this->knownLocations[$this->opponentGoal()]);
+        // get relative coords to get sides a and b of the right triangle
+        $b = $goal[0] - $coords[0];
+        $a = $goal[1] - $coords[1];
+        // if b is positive, we are beneath the goal
+        if ($b < 0) {
+            $beneath = true;
+        } else {
+            $beneath = false;
+        }
+        // use a^2+b^2=c^2 for right triangle to get distance
+        $c = sqrt($a*$a + $b*$b);
+        // use law of sines to get the angle
+        // c/sin C = b/sin B
+        // c/sin 90 = c/1 = c
+        // c = b/sin B
+        // sin B*c = b
+        // sin B = b/c
+        // B = arcsin(b/c)
+        $B = asin($b/$c);
+        $A = asin($a/$c);
+        return array('direction' => $A, 'distance' => $c);
+        $goal = $this->see->getItem($this->opponentGoal());
+        if ($goal) {
+            return $goal['direction'];
+        }
     }
 
     function shoot()

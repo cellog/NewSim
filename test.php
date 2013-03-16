@@ -1,86 +1,16 @@
 <?php
 function __autoload($class)
 {
-    include __DIR__ . '/' . substr($class, strrpos($class, '\\')+1) . '.php';
+    include __DIR__ . '/' . str_replace(array('ThroughBall\\', '\\'), array('', '/'),
+                                        $class) . '.php';
 }
 
 $manager = new ThroughBall\Util\UDPManager('testing');
 $opponent = new ThroughBall\Util\UDPManager('opponent');
 
-class Tester extends ThroughBall\Player {
-    protected $goaldirection = 0;
-    protected $mygoaldirection = 0;
-    protected $visiblegoal;
-    function handleSenseBody($sensebody)
-    {
-        parent::handleSenseBody($sensebody);
-        $see = $this->see;
-        if (!$see) return;
-        $ball = $see->getItem('(b)');
-        if ($ball) {
-            //echo "ball ", $ball['direction'], ' ', $ball['distance'], "\n";
-        }
-        if (!$this->cycle) return;
-        $see = $this->see;
-        $params = $this->see->listSeenItems();
-        if (!count($params)) {
-            $this->turn(-180);
-            return;
-        }
-        //var_export($this->toRelativeCoordinates($this->getCoordinates()));
-        $goal = $see->getItem($this->ownGoal());
-        if ($goal) {
-            $this->mygoaldirection = $goal['direction'];
-            $this->visiblegoal = $this->side;
-            //echo $this->team, " ", $this->side, " see own ", $this->ownGoal(), " goal ", $goal['direction'], "\n";
-        }
-        $goal = $see->getItem($this->opponentGoal());
-        if ($goal) {
-            $this->goaldirection = $goal['direction'];
-            $this->visiblegoal = $this->opponent();
-            //echo $this->team, " ", $this->side, " see opponent ", $this->opponentGoal(), " goal ", $goal['direction'], "\n";
-        }
-        $ball = $see->getItem('(b)');
-        if ($ball) {
-            if ($this->isKickable($ball)) {
-                if ($this->visiblegoal == $this->opponent()) {
-                    $goal = $this->see->getItem($this->opponentGoal());
-                    if (!$goal) {
-                        $this->turn(-45);
-                    } else {
-                        if ($goal['distance'] < 20) {
-                            $this->shoot();
-                        } else {
-                            $this->kick(20, 0);
-                            $this->dash(0, 20);
-                        }
-                    }
-                } else {
-                    $this->kick(100, 180 - $this->mygoaldirection);
-                }
-            } else {
-                if ($ball['distance'] < 30 && ($ball['direction'] > 5 || $ball['direction'] < -5)) {
-                    //echo 'turn to ball ', $ball['direction']/2, ' me', $sensebody->getParam('direction'),"\n";
-                    $this->turnTowards($ball['direction']/2);
-                } else {
-                    //echo 'move to ball ', $ball['direction'], ' me', $sensebody->getParam('direction'),"\n";
-                    if ($ball['distance'] > 1) {
-                        $this->moveTowards($ball, 60);
-                    } else {
-                        $this->moveTowards($ball, 10);
-                    }
-                }
-            }
-            return;
-        } 
-        echo "turn 30\n";
-        $this->turn(30);
-    }
-}
-
 
 //$goalie = $manager->addGoalie();
-$player1 = $manager->addPlayer('Tester');
+$player1 = $manager->addPlayer('ThroughBall\\Players\\Tester');
 //$player2 = $manager->addPlayer('Tester');
 
 //$goalie = $opponent->addGoalie();
@@ -88,7 +18,7 @@ $player1 = $manager->addPlayer('Tester');
 //$player3 = $opponent->addPlayer('Tester');
 
 //$player->move(-10, 10);
-$player1->move(-10, -5);
+$player1->move(-50, -30);
 //$player2->move(-20, 20);
 //$player3->move(-30, 30);
 $manager->run();
