@@ -8,12 +8,13 @@ class SeeParser {
     }
     function parse($see, See $seen)
     {
+        if (preg_match('/\(see (\d+)\)/', $see, $match)) {
+            $seen->setTime($match[1]);
+            $seen->setParams(array());
+            return $seen;
+        }
         $count = substr($see, 5, strpos($see, '(', 1) - 6) + 0;
         $see = substr($see, strpos($see, '(', 1));
-        if ($see == ')') {
-            $seen->setTime($count);
-            $seen->setParams(array());
-        }
         if (preg_match_all('/\('
                         . '('
                         . '\(g [lr]\)'

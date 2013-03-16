@@ -227,6 +227,12 @@ class Player extends UDP
                 $seen = $this->see->getItem($param);
                 $found[$param] = array($seen,
                                        $this->toAbsoluteCoordinates($this->knownLocations[$param]));
+                if ($seen['distance'] < 11) {
+                    // this is 100% accurate, basically
+                    $far = array();
+                    $near = array($param => $found[$param]);
+                    break;
+                }
                 if ($seen['distance'] < 20) {
                     // these will be more accurate
                     $near[$param] = $found[$param];
@@ -346,9 +352,17 @@ class Player extends UDP
         $this->queueCommand('(dash ' . $speed . ' ' . $direction . ')');
     }
 
-    function turnTowards($item)
+    function dash($direction, $speed)
     {
-        $this->turn($item['direction']);
+        $this->queueCommand('(dash ' . $speed . ' ' . $direction . ')');
+    }
+
+    function turnTowards($direction)
+    {
+        if (is_array($direction)) {
+            $direction = $item['direction'];
+        }
+        $this->turn($direction);
     }
 
     function turn($angle)
