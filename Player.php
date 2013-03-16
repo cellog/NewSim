@@ -386,34 +386,34 @@ class Player extends UDP
         $b = $goal[0] - $coords[0];
         $a = $goal[1] - $coords[1];
         // if b is positive, we are beneath the goal
-        if ($b < 0) {
+        if ($a < 0) {
             $beneath = true;
+            $hypa = -$a;
         } else {
+            $hypa = $a;
             $beneath = false;
         }
         // use a^2+b^2=c^2 for right triangle to get distance
-        $c = sqrt($a*$a + $b*$b);
-        // use law of sines to get the angle
-        // c/sin C = b/sin B
-        // c/sin 90 = c/1 = c
-        // c = b/sin B
-        // sin B*c = b
-        // sin B = b/c
-        // B = arcsin(b/c)
-        $B = asin($b/$c);
-        $A = asin($a/$c);
-        return array('direction' => $A, 'distance' => $c);
+        $c = sqrt($hypa*$hypa + $b*$b);
+        // simple formula: use atan(opposite/adjacent) to get the angle
+        $dir = $this->sensebody->getParam('head_angle') -
+             $this->sensebody->getParam('direction');
+        $dir = 0;
+        $B = -(rad2deg(atan2($a, $b)) - $dir);
+        return array('direction' => $B, 'distance' => $c);
         $goal = $this->see->getItem($this->opponentGoal());
         if ($goal) {
             return $goal['direction'];
         }
     }
 
-    function shoot()
+    function shoot($direction = null)
     {
-        $goal = $this->see->getItem($this->opponentGoal());
-        if (!$goal) return;
-        $this->kick(100, $goal['direction']);
+        if (!$direction) {
+            $direction = $this->getGoalDirection();
+            $direction = $direction['direction'];
+        }
+        $this->kick(100, $direction);
     }
 }
 

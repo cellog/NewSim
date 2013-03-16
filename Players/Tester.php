@@ -7,19 +7,10 @@ class Tester extends Player {
     protected $visiblegoal;
     function handleSenseBody($sensebody)
     {
+        static $foo = false;
         parent::handleSenseBody($sensebody);
-        $see = $this->see;
-        if (!$see) return;
-        $goal = $see->getItem('(g r)');
-        if ($goal) {
-            echo "goal ", $goal['direction'], ' ', $goal['distance'], "\n";
-        }
-        $goal = $see->getItem('(f c)');
-        if ($goal) {
-            echo "f c ", $goal['direction'], ' ', $goal['distance'], "\n";
-        }
+        echo "body direction ", $sensebody->getParam('direction'), "\n";
         $g = $this->getGoalDirection();
-        echo "calc angle/distance ", $g['direction'], ' ', $g['distance'], "\n";
         if (!$this->cycle) return;
         $see = $this->see;
         $params = $this->see->listSeenItems();
@@ -27,36 +18,26 @@ class Tester extends Player {
             $this->turn(-180);
             return;
         }
-        //var_export($this->toRelativeCoordinates($this->getCoordinates()));
-        $goal = $see->getItem($this->ownGoal());
-        if ($goal) {
-            $this->mygoaldirection = $goal['direction'];
-            $this->visiblegoal = $this->side;
-            //echo $this->team, " ", $this->side, " see own ", $this->ownGoal(), " goal ", $goal['direction'], "\n";
-        }
-        $goal = $see->getItem($this->opponentGoal());
-        if ($goal) {
-            $this->goaldirection = $goal['direction'];
-            $this->visiblegoal = $this->opponent();
-            //echo $this->team, " ", $this->side, " see opponent ", $this->opponentGoal(), " goal ", $goal['direction'], "\n";
-        }
         $ball = $see->getItem('(b)');
         if ($ball) {
             if ($this->isKickable($ball)) {
-                if ($this->visiblegoal == $this->opponent()) {
-                    $goal = $this->see->getItem($this->opponentGoal());
-                    if (!$goal) {
-                        $this->turn(-45);
-                    } else {
-                        if ($goal['distance'] < 20) {
-                            $this->shoot();
-                        } else {
-                            $this->kick(20, 0);
-                            $this->dash(0, 20);
-                        }
-                    }
+                echo "ball kickable dist ", $g['distance'], ' dir ', $g['direction'], ' ',
+                    $this->sensebody->getParam('direction'), "\n";
+                if ($g['distance'] > 70) {
+                    $this->shoot($goal['direction']);
+                    return;
+                    // we're defending
                 } else {
-                    $this->kick(100, 180 - $this->mygoaldirection);
+                    if ($g['direction'] > 5) {
+                        $this->turn($g['direction']/2);
+                    }
+                    if ($goal['distance'] < 20) {
+                        $this->shoot($goal['direction']);
+                    } else {
+                        // dribble
+                        $this->kick(20, 0);
+                        $this->dash(0, 20);
+                    }
                 }
             } else {
                 if ($ball['distance'] < 30 && ($ball['direction'] > 5 || $ball['direction'] < -5)) {
