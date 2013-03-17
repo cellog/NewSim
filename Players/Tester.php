@@ -5,6 +5,7 @@ class Tester extends Player {
     protected $goaldirection = 0;
     protected $mygoaldirection = 0;
     protected $visiblegoal;
+    protected $shot = 0;
     function handleSenseBody($sensebody)
     {
         static $foo = false;
@@ -23,18 +24,28 @@ class Tester extends Player {
             if ($this->isKickable($ball)) {
                 echo "ball kickable dist ", $g['distance'], ' dir ', $g['direction'], ' ',
                     $this->bodydirection, "\n";
+                if ($this->cycle - $this->shot < 3) {
+                    $this->dash($ball['direction'], 60);
+                    return;
+                }
                 if ($g['distance'] > 70) {
+                    echo "shoot far\n";
                     $this->shoot($goal['direction']);
+                    $this->shot = $this->cycle;
                     return;
                     // we're defending
                 } else {
                     if ($g['direction'] > 5) {
+                        echo "turn to goal\n";
                         $this->turn($g['direction']/2);
                         return;
                     }
                     if ($goal['distance'] < 20) {
+                        echo "shoot\n";
                         $this->shoot($goal['direction']);
+                        $this->shot = $this->cycle;
                     } else {
+                        echo "dribble\n";
                         // dribble
                         $this->kick(20, 0);
                         $this->dash(0, 20);
