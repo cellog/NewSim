@@ -16,6 +16,7 @@ class Player extends UDP
     protected $playertypes;
     protected $sensebody;
     protected $see;
+    protected $coordinates;
     protected $bodydirection = 0;
     protected $commands = array();
     protected $debug = false;
@@ -179,10 +180,28 @@ class Player extends UDP
 
     function handleSee($see)
     {
-        $this->see = $see;
         if ($this->debug) {
             echo "see ", $this->unum, "\n";
         }
+        $this->see = $see;
+        // cache current coordinates
+        $this->coordinates = $this->getCoordinates();
+        return;
+        if (!$this->sensebody->getParam('speed')) {
+            // body direction is direction parameter and is set in sensebody handler
+            //return;
+        }
+        // use coords to find body direction here
+        $bodydirections = array();
+        foreach ($this->see->listSeenItems() as $param) {
+            if (!isset($this->knownLocations[$param])) {
+                continue;
+            }
+            $coords = $this->toAbsoluteCoordinates($this->knownLocations[$param]);
+            $angle = -rad2deg(atan2($coords[1] - $this->coordinates[1], $coords[0] - $this->coordinates[0]));
+            $bodydirections[] = -($info['direction'] - $angle);
+        }
+        $this->bodydirection = array_sum($bodydirections)/count($bodydirections);
     }
 
     function handleHear($hear)
@@ -384,8 +403,10 @@ class Player extends UDP
 
     function updateDirection($angle)
     {
-        if ($this->bodydirection + $angle >= 2*$this->bodydirection) {
-            return;
+        if ($this->bodydirection + $angle > 180) {
+            $this->bodydirection = 360 - $this->bodydirection;
+        } elseif ($this->bodydirection + $angle < -180) {
+            $this->bodydirection = 360 + $this->bodydirection;
         }
         $this->bodydirection += $angle;
     }
