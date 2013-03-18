@@ -10,10 +10,30 @@ class Tester extends Player {
     {
         static $foo = false;
         parent::handleSenseBody($sensebody);
-        echo "body direction ", $this->bodydirection, "\n";
         $g = $this->getGoalDirection();
         if (!$this->cycle) return;
         $see = $this->see;
+        $rightline = $see->getItem('(l r)');
+        $leftline = $see->getItem('(l l)');
+        $topline = $see->getItem('(l t)');
+        $bottomline = $see->getItem('(l b)');
+        switch ($this->cycle) {
+            case 1 : $this->turn(20);return;
+            case 100 : $this->turn(20);return;
+            case 200 : $this->turn(20);return;
+            case 300 : $this->turn(20);return;
+            case 400 : $this->turn(20);return;
+            case 500 : $this->turn(20);return;
+            case 600 : $this->turn(20);return;
+            case 700 : $this->turn(20);return;
+            case 800 : $this->turn(20);return;
+        }
+        if (0 == $this->cycle % 7) {
+            $this->dash(0, 100);
+            return;
+        }
+            echo $this->bodydirection, "\n";
+        return;
         $params = $this->see->listSeenItems();
         if (!count($params)) {
             $this->turn(-180);
@@ -22,25 +42,27 @@ class Tester extends Player {
         $ball = $see->getItem('(b)');
         if ($ball) {
             if ($this->isKickable($ball)) {
-                echo "ball kickable dist ", $g['distance'], ' dir ', $g['direction'], ' ',
+                $goal = $this->toAbsoluteCoordinates($this->knownLocations[$this->opponentGoal()]);
+                $dist = $goal[1] - $this->coordinates[1];
+                echo "ball kickable dist ", $dist, ' dir ', $g['direction'], ' body dir ',
                     $this->bodydirection, "\n";
                 if ($this->cycle - $this->shot < 3) {
                     $this->dash($ball['direction'], 60);
                     return;
                 }
-                if ($g['distance'] > 70) {
+                if ($dist > 57) {
                     echo "shoot far\n";
                     $this->shoot($goal['direction']);
                     $this->shot = $this->cycle;
                     return;
                     // we're defending
                 } else {
-                    if ($g['direction'] > 5) {
+                    if ($dist > 5) {
                         echo "turn to goal\n";
                         $this->turn($g['direction']/2);
                         return;
                     }
-                    if ($goal['distance'] < 20) {
+                    if ($dist < 20) {
                         echo "shoot\n";
                         $this->shoot($goal['direction']);
                         $this->shot = $this->cycle;

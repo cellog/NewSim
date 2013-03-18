@@ -184,24 +184,57 @@ class Player extends UDP
             echo "see ", $this->unum, "\n";
         }
         $this->see = $see;
-        // cache current coordinates
-        $this->coordinates = $this->getCoordinates();
-        return;
-        if (!$this->sensebody->getParam('speed')) {
-            // body direction is direction parameter and is set in sensebody handler
-            //return;
+        // cache current coordinates and direction
+
+        // check for lines
+        $closestline = false;
+        foreach (array('(l t)', '(l r)', '(l b)', '(l l)') as $line) {
+            $seenline = $see->getItem($line);
+            if (!$seenline) continue;
+            if ($closestline) {
+                if ($seenline['distance'] < $closestline['distance']) {
+                    $linename = $line;
+                    $closestline = $seenline;
+                }
+            } else {
+                $linename = $line;
+                $closestline = $seenline;
+            }
         }
-        // use coords to find body direction here
+        // easiest way
+        if (!$this->sensebody->getParam('speed')) {
+            echo "easiest ";
+            // body direction is direction parameter and is set in sensebody handler
+            return;
+        }
+        if ($closestline) {
+            $vector = new Util\LineVector($closestline['distance'], $closestline['direction'], $linename);
+            $this->bodydirection = $vector->angle();
+            echo "second easiest ";
+            return; // easy peasy
+        }
+        // hard way
         $bodydirections = array();
-        foreach ($this->see->listSeenItems() as $param) {
+        $landmarks = array();
+        $i = 0;
+        foreach ($see->listSeenItems() as $param) {
             if (!isset($this->knownLocations[$param])) {
                 continue;
             }
-            $coords = $this->toAbsoluteCoordinates($this->knownLocations[$param]);
-            $angle = -rad2deg(atan2($coords[1] - $this->coordinates[1], $coords[0] - $this->coordinates[0]));
-            $bodydirections[] = -($info['direction'] - $angle);
+            $bodydirections[] = $see->getItem($param);
+            $landmarks[] = $this->knownLocations[$param];
+            if (++$i == 2) break;
         }
-        $this->bodydirection = array_sum($bodydirections)/count($bodydirections);
+        if ($i != 2) return; // fail
+
+        $vector1 = new Util\PolarVector($bodydirections[0]['distance'], $bodydirections[0]['direction']);
+        $vector2 = new Util\PolarVector($bodydirections[1]['distance'], $bodydirections[1]['direction']);
+
+        $landmark1 = new Util\Vector($landmarks[0][0], $landmarks[0][1]);
+        $landmark2 = new Util\Vector($landmarks[1][0], $landmarks[1][1]);
+        $separation = Util\Vector::subtract($vector1, $vector2);
+        $landmarkseparation = Util\Vector::subtract($landmark1, $landmark2);
+        $this->bodydirection = $landmarkseparation->angle() - $separation->angle();
     }
 
     function handleHear($hear)
@@ -244,6 +277,7 @@ class Player extends UDP
         if (!count($params)) {
             return false;
         }
+
         // check for flags
         $found = array();
         $far = array();
@@ -370,7 +404,7 @@ class Player extends UDP
 
     function realDirection($angle)
     {
-        return $angle + $this->sensebody->getParam('direction') + $this->sensebody->getParam('head_angle');
+        return $angle + $this->bodydirection + $this->sensebody->getParam('head_angle');
     }
 
     function moveTowards($item, $speed = 100)
@@ -403,11 +437,8 @@ class Player extends UDP
 
     function updateDirection($angle)
     {
-        if ($this->bodydirection + $angle > 180) {
-            $this->bodydirection = 360 - $this->bodydirection;
-        } elseif ($this->bodydirection + $angle < -180) {
-            $this->bodydirection = 360 + $this->bodydirection;
-        }
+        return;
+        echo "Adding angle " , $angle , " to dir ", $this->bodydirection, "\n";
         $this->bodydirection += $angle;
     }
 
