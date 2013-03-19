@@ -365,8 +365,8 @@ class Player extends UDP
             return $results['far'];
         }
         // bias towards near results
-        return array(.7 * $results['near'][0] + .3 * $results['far'][0],
-                     .7 * $results['near'][1] + .3 * $results['far'][1]);
+        return $this->toRelativeCoordinates(array(.7 * $results['near'][0] + .3 * $results['far'][0],
+                     .7 * $results['near'][1] + .3 * $results['far'][1]));
     }
 
     function opponentGoal()
@@ -440,11 +440,16 @@ class Player extends UDP
     function getGoalDirection()
     {
         $self = new Util\Vector($this->coordinates[0], $this->coordinates[1]);
-        $goalvector = Util\Vector::subtract(new Util\Vector($this->knownLocations[$this->opponentGoal()][0],
-                                                       $this->knownLocations[$this->opponentGoal()][1]),
+        $goal = new Util\Vector($this->knownLocations[$this->opponentGoal()][0],
+                                                       $this->knownLocations[$this->opponentGoal()][1]);
+        $goalvector = Util\Vector::subtract($goal,
                                             $self);
-        $self->dump();
-        return array('direction' => $goalvector->angle(), 'distance' => $goalvector->length());
+
+        echo "self ";$self->dump();
+        echo "goal ";$goal->dump();
+        echo "subtracted ";$goalvector->dump();
+        echo "body dir ",$this->bodydirection, "\n";
+        return $goalvector;
     }
 
     function shoot($direction = null)

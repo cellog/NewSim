@@ -23,28 +23,28 @@ class Tester extends Player {
             if ($this->isKickable($ball)) {
                 $goal = $this->toAbsoluteCoordinates($this->knownLocations[$this->opponentGoal()]);
                 $dist = $goal[1] - $this->coordinates[1];
-                echo "ball kickable dist ", $dist, ' dir ', $g['direction'], ' body dir ',
+                echo "ball kickable dist ", $dist, ' dir ', $g->angle(), ' body dir ',
                     $this->bodydirection, "\n";
                 if ($this->cycle - $this->shot < 3) {
                     $this->dash($ball['direction'], 60);
                     return;
                 }
                 if ($dist > 57) {
-                    echo "shoot far ", ($g['direction'] - $this->bodydirection), "\n";
-                    $this->shoot($g['direction'] - $this->bodydirection);
+                    echo "shoot far ", ($g->angle() - $this->bodydirection), "\n";
+                    $this->shoot($g->angle() - $this->bodydirection);
                     $this->shot = $this->cycle;
                     return;
                     // we're defending
                 } else {
                     if ($dist < 20) {
-                        echo "shoot ",($this->bodydirection - $g['direction']), "\n";
-                        $this->shoot($this->bodydirection - $g['direction']);
+                        echo "shoot ",($g->angle()), "\n";
+                        $this->shoot($g->angle());
                         $this->shot = $this->cycle;
                     } else {
-                            echo "goal stat ", $g['direction'], ' ', $this->bodydirection,"\n";
-                        if (abs($g['direction']) - abs($this->bodydirection) > 2) {
-                            $this->turn($g['direction'] - $this->bodydirection);
-                            echo "turn to goal ", ($g['direction'] - $this->bodydirection),"\n";
+                            echo "goal stat ", $g->angle(), ' ', $this->bodydirection,"\n";
+                        if (abs($g->angle()) - abs($this->bodydirection) > 2) {
+                            $this->turn($g->angle() - $this->bodydirection);
+                            echo "turn to goal ", ($g->angle()),"\n";
                             return;
                         }
                         echo "dribble\n";

@@ -19,7 +19,7 @@ class Vector
 
     function toPolar()
     {
-        $p = new PolarVector;
+        $p = new PolarVector(null, null);
         $p->from($this);
         return $p;
     }
@@ -46,7 +46,7 @@ class Vector
 
     function angleBetween(Vector $v)
     {
-        return acos(deg2rad($this->dotProduct($v)));
+        return rad2deg(acos(deg2rad($this->dotProduct($v))));
     }
 
     static function normalizeAngle($angle)
@@ -62,7 +62,7 @@ class Vector
 
     static function subtract(Vector $v1, Vector $v2)
     {
-        return new Vector($v2->width() - $v2->width(), $v2->height() - $v1->height());
+        return new Vector($v1->width() - $v2->width(), $v1->height() - $v2->height());
     }
 
     function normalize()
@@ -79,7 +79,7 @@ class Vector
 
     function length()
     {
-        return sqrt($this->x^2 + $this->y^2);
+        return sqrt($this->x*$this->x + $this->y*$this->y);
     }
 
     function angle()
@@ -99,6 +99,6 @@ class Vector
 
     function dump()
     {
-        echo "x ", $this->length(), " y ", $this->width(), " length ", $this->length(), " angle ", $this->angle(),"\n";
+        echo "x ", $this->width(), " y ", $this->height(), " length ", $this->length(), " angle ", $this->angle(),"\n";
     }
 }

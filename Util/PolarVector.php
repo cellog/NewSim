@@ -47,8 +47,11 @@ class PolarVector extends Vector
         }
     }
 
-    function angle()
+    function angle($set = null)
     {
+        if (is_numeric($set)) {
+            $this->y = self::normalizeAngle($set);
+        }
         return $this->y;
     }
 
