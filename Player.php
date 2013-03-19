@@ -170,9 +170,6 @@ class Player extends UDP
     {
         $this->sensebody = $sensebody;
         $this->cycle = $sensebody->getTime();
-        if (!$sensebody->getParam('speed')) {
-            $this->bodydirection = $sensebody->getParam('direction');
-        }
         if ($this->debug) {
             echo "sense body ", $this->unum, "\n";
         }
@@ -185,7 +182,7 @@ class Player extends UDP
         }
         $this->see = $see;
         // cache current coordinates and direction
-
+        $this->coordinates = $this->getCoordinates();
         // check for lines
         $closestline = false;
         foreach (array('(l t)', '(l r)', '(l b)', '(l l)') as $line) {
@@ -201,16 +198,9 @@ class Player extends UDP
                 $closestline = $seenline;
             }
         }
-        // easiest way
-        if (!$this->sensebody->getParam('speed')) {
-            echo "easiest ";
-            // body direction is direction parameter and is set in sensebody handler
-            return;
-        }
         if ($closestline) {
             $vector = new Util\LineVector($closestline['distance'], $closestline['direction'], $linename);
             $this->bodydirection = $vector->angle();
-            echo "second easiest ";
             return; // easy peasy
         }
         // hard way
@@ -449,31 +439,12 @@ class Player extends UDP
 
     function getGoalDirection()
     {
-        $coords = $this->getCoordinates();
-        $goal = $this->toAbsoluteCoordinates($this->knownLocations[$this->opponentGoal()]);
-        // get relative coords to get sides a and b of the right triangle
-        $b = $goal[0] - $coords[0];
-        $a = $goal[1] - $coords[1];
-        // if b is positive, we are beneath the goal
-        if ($a < 0) {
-            $beneath = true;
-            $hypa = -$a;
-        } else {
-            $hypa = $a;
-            $beneath = false;
-        }
-        // use a^2+b^2=c^2 for right triangle to get distance
-        $c = sqrt($hypa*$hypa + $b*$b);
-        // simple formula: use atan(opposite/adjacent) to get the angle
-        $dir = $this->sensebody->getParam('head_angle') -
-             $this->bodydirection;
-        $dir = 0;
-        $B = -(rad2deg(atan2($a, $b)) - $dir);
-        return array('direction' => $B, 'distance' => $c);
-        $goal = $this->see->getItem($this->opponentGoal());
-        if ($goal) {
-            return $goal['direction'];
-        }
+        $self = new Util\Vector($this->coordinates[0], $this->coordinates[1]);
+        $goalvector = Util\Vector::subtract(new Util\Vector($this->knownLocations[$this->opponentGoal()][0],
+                                                       $this->knownLocations[$this->opponentGoal()][1]),
+                                            $self);
+        $self->dump();
+        return array('direction' => $goalvector->angle(), 'distance' => $goalvector->length());
     }
 
     function shoot($direction = null)

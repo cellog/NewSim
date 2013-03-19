@@ -18,7 +18,7 @@ $player1 = $manager->addPlayer('ThroughBall\\Players\\Tester');
 //$player3 = $opponent->addPlayer('Tester');
 
 //$player->move(-10, 10);
-$player1->move(-50, -10);
+$player1->move(-10, -5);
 //$player2->move(-20, 20);
 //$player3->move(-30, 30);
 $manager->run();

@@ -13,27 +13,6 @@ class Tester extends Player {
         $g = $this->getGoalDirection();
         if (!$this->cycle) return;
         $see = $this->see;
-        $rightline = $see->getItem('(l r)');
-        $leftline = $see->getItem('(l l)');
-        $topline = $see->getItem('(l t)');
-        $bottomline = $see->getItem('(l b)');
-        switch ($this->cycle) {
-            case 1 : $this->turn(20);return;
-            case 100 : $this->turn(20);return;
-            case 200 : $this->turn(20);return;
-            case 300 : $this->turn(20);return;
-            case 400 : $this->turn(20);return;
-            case 500 : $this->turn(20);return;
-            case 600 : $this->turn(20);return;
-            case 700 : $this->turn(20);return;
-            case 800 : $this->turn(20);return;
-        }
-        if (0 == $this->cycle % 7) {
-            $this->dash(0, 100);
-            return;
-        }
-            echo $this->bodydirection, "\n";
-        return;
         $params = $this->see->listSeenItems();
         if (!count($params)) {
             $this->turn(-180);
@@ -51,22 +30,23 @@ class Tester extends Player {
                     return;
                 }
                 if ($dist > 57) {
-                    echo "shoot far\n";
-                    $this->shoot($goal['direction']);
+                    echo "shoot far ", ($g['direction'] - $this->bodydirection), "\n";
+                    $this->shoot($g['direction'] - $this->bodydirection);
                     $this->shot = $this->cycle;
                     return;
                     // we're defending
                 } else {
-                    if ($dist > 5) {
-                        echo "turn to goal\n";
-                        $this->turn($g['direction']/2);
-                        return;
-                    }
                     if ($dist < 20) {
-                        echo "shoot\n";
-                        $this->shoot($goal['direction']);
+                        echo "shoot ",($this->bodydirection - $g['direction']), "\n";
+                        $this->shoot($this->bodydirection - $g['direction']);
                         $this->shot = $this->cycle;
                     } else {
+                            echo "goal stat ", $g['direction'], ' ', $this->bodydirection,"\n";
+                        if (abs($g['direction']) - abs($this->bodydirection) > 2) {
+                            $this->turn($g['direction'] - $this->bodydirection);
+                            echo "turn to goal ", ($g['direction'] - $this->bodydirection),"\n";
+                            return;
+                        }
                         echo "dribble\n";
                         // dribble
                         $this->kick(20, 0);

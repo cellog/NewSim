@@ -60,6 +60,11 @@ class Vector
         return $angle;
     }
 
+    static function subtract(Vector $v1, Vector $v2)
+    {
+        return new Vector($v2->width() - $v2->width(), $v2->height() - $v1->height());
+    }
+
     function normalize()
     {
         $length = $this->length();
@@ -90,5 +95,10 @@ class Vector
     function height()
     {
         return $this->y;
+    }
+
+    function dump()
+    {
+        echo "x ", $this->length(), " y ", $this->width(), " length ", $this->length(), " angle ", $this->angle(),"\n";
     }
 }
