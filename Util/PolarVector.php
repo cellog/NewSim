@@ -9,6 +9,13 @@ class PolarVector extends Vector
     {
         $this->x = $length; // recycle variables, they just have a different meaning
         $this->y = $angle;
+        $this->normalized = $length == 1;
+    }
+
+    function polarAssign($length, $angle)
+    {
+        $this->x = $length;
+        $this->y = $angle;
     }
 
     function from(Vector $v)
@@ -47,6 +54,11 @@ class PolarVector extends Vector
         }
     }
 
+    function quickAngle($angle)
+    {
+        $this->y = $angle;
+    }
+
     function angle($set = null)
     {
         if (is_numeric($set)) {
@@ -67,6 +79,12 @@ class PolarVector extends Vector
 
     function height()
     {
-        return $this->y * sin(deg2rad($this->y));
+        return $this->x * sin(deg2rad($this->y));
+    }
+
+    function scale($value)
+    {
+        $this->x += sqrt($value);
+        return $this;
     }
 }

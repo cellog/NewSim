@@ -285,16 +285,90 @@ class ServerParams
     const FOUL_DETECT_PROBABILITY = 0.5;
     const FOUL_EXPONENT = 10.0;
     const FOUL_CYCLES = 5;
-    public $params = array();
+    public static $params = array();
     static function addParam(Param $param)
     {
         self::$params[$param->getName()] = $param->getValue();
+        switch ($param->getName()) {
+            case 'half_time' :
+                self::$params['actual_half_time'] = $param->getValue() * 10;
+                break;
+            case 'extra_half_time' :
+                self::$params['actual_extra_half_time'] = $param->getValue() * 10;
+                break;
+            case 'pitch_length' :
+                self::$params['pitch_half_length'] = $param->getValue() / 2;
+                self::$params['our_team_goal_line'] = -$param->getValue() / 2;
+                self::$params['their_team_goal_line'] = $param->getValue() / 2;
+                self::$params['our_team_goal_pos'] = new Util\Vector(self::$params['our_team_goal_line'], 0);
+                self::$params['their_team_goal_pos'] = new Util\Vector(self::$params['their_team_goal_line'], 0);
+                self::$params['our_penalty_area_line_x'] = self::$params['our_team_goal_line']
+                        + self::$params['penalty_area_length'];
+                self::$params['their_penalty_area_line_x'] = self::$params['their_team_goal_line']
+                        + self::$params['penalty_area_length'];
+                break;
+            case 'pitch_width' :
+                self::$params['pitch_half_width'] = $param->getValue() / 2;
+                break;
+            case 'penalty_area_length' :
+                self::$params['penalty_area_half_length'] = $param->getValue() / 2;
+                self::$params['our_penalty_area_line_x'] = self::$params['our_team_goal_line']
+                        + self::$params['penalty_area_length'];
+                self::$params['their_penalty_area_line_x'] = self::$params['their_team_goal_line']
+                        + self::$params['penalty_area_length'];
+                break;
+            case 'penalty_area_width' :
+                self::$params['penalty_area_half_width'] = $param->getValue() / 2;
+                break;
+            case 'goal_area_length' :
+                self::$params['goal_area_half_length'] = $param->getValue() / 2;
+                break;
+            case 'goal_area_width' :
+                self::$params['goal_area_half_width'] = $param->getValue() / 2;
+                break;
+        }
     }
 
     function __construct()
     {
         static $init = 0;
         if ($init++) return;
+        self::$params['max_player'] = self::DEFAULT_MAX_PLAYER;
+        self::$params['pitch_width'] = self::DEFAULT_PITCH_WIDTH;
+        self::$params['pitch_half_width'] = self::DEFAULT_PITCH_WIDTH / 2;
+        self::$params['pitch_length'] = self::DEFAULT_PITCH_LENGTH;
+        self::$params['pitch_margin'] = self::DEFAULT_PITCH_MARGIN;
+        self::$params['center_circle_r'] = self::DEFAULT_CENTER_CIRCLE_R;
+        self::$params['penalty_area_length'] = self::DEFAULT_PENALTY_AREA_LENGTH;
+        self::$params['penalty_area_half_length'] = self::DEFAULT_PENALTY_AREA_LENGTH / 2;
+        self::$params['penalty_area_width'] = self::DEFAULT_PENALTY_AREA_WIDTH;
+        self::$params['penalty_area_half_width'] = self::DEFAULT_PENALTY_AREA_WIDTH / 2;
+        self::$params['goal_area_length'] = self::DEFAULT_GOAL_AREA_LENGTH;
+        self::$params['goal_area_half_length'] = self::DEFAULT_GOAL_AREA_LENGTH / 2;
+        self::$params['goal_area_width'] = self::DEFAULT_GOAL_AREA_WIDTH;
+        self::$params['goal_area_half_width'] = self::DEFAULT_GOAL_AREA_WIDTH / 2;
+        self::$params['goal_depth'] = self::DEFAULT_GOAL_DEPTH;
+        self::$params['penalty_circle_r'] = self::DEFAULT_PENALTY_CIRCLE_R;
+        self::$params['penalty_spot_dist'] = self::DEFAULT_PENALTY_SPOT_DIST;
+        self::$params['corner_arc_r'] = self::DEFAULT_CORNER_ARC_R;
+        self::$params['kickoff_clear_distance'] = self::DEFAULT_CENTER_CIRCLE_R;
+        self::$params['wind_weight'] = self::DEFAULT_WIND_WEIGHT;
+        self::$params['goal_post_radius'] = self::DEFAULT_GOAL_POST_RADIUS;
+        self::$params['pitch_half_length'] = self::$params['pitch_length'] / 2;
+        self::$params['our_team_goal_line'] = -self::$params['pitch_length'] / 2;
+        self::$params['their_team_goal_line'] = self::$params['pitch_length'] / 2;
+        self::$params['our_team_goal_pos'] = new Util\Vector(self::$params['our_team_goal_line'], 0);
+        self::$params['their_team_goal_pos'] = new Util\Vector(self::$params['their_team_goal_line'], 0);
+        self::$params['our_penalty_area_line_x'] = self::$params['our_team_goal_line']
+                + self::$params['penalty_area_length'];
+        self::$params['their_penalty_area_line_x'] = self::$params['their_team_goal_line']
+                + self::$params['penalty_area_length'];
+        self::$params['penalty_area_half_length'] = DEFAULT_PENALTY_AREA_LENGTH / 2;
+        self::$params['our_penalty_area_line_x'] = self::$params['our_team_goal_line']
+                + self::$params['penalty_area_length'];
+        self::$params['their_penalty_area_line_x'] = self::$params['their_team_goal_line']
+                + self::$params['penalty_area_length'];
+
         self::$params['goal_width'] = self::DEFAULT_GOAL_WIDTH;
         self::$params['inertia_moment'] = self::DEFAULT_INERTIA_MOMENT;
     

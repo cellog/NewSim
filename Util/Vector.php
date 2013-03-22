@@ -10,6 +10,18 @@ class Vector
         $this->y = $height;
     }
 
+    function assign($width, $height)
+    {
+        $this->x = $width;
+        $this->y = $height;
+    }
+
+    function fromArray(array $arr)
+    {
+        $this->x = $arr[0];
+        $this->y = $arr[1];
+    }
+
     function from(Vector $v)
     {
         $this->x = $v->width();
@@ -51,11 +63,11 @@ class Vector
 
     static function normalizeAngle($angle)
     {
-        $angle %= 360;
+        if ($angle > 360 || $angle < -360) $angle %= 360;
         if ($angle < -180) {
             $angle += 360;
         } elseif ($angle > 180) {
-            $angle -= 180;
+            $angle -= 360;
         }
         return $angle;
     }
@@ -65,11 +77,47 @@ class Vector
         return new Vector($v1->width() - $v2->width(), $v1->height() - $v2->height());
     }
 
+    static function add(Vector $v1, $v2)
+    {
+        if (is_array($v2)) {
+            $x2 = $v2[0];
+            $y2 = $v2[1];
+        } elseif ($v2 instanceof Vector) {
+            $x2 = $v2->width();
+            $y2 = $v2->height();
+        }
+        return new Vector($v1->width() + $v2->width(), $v1->height() + $v2->height());
+    }
+
+    function simplePlus(Vector $v)
+    {
+        return array($x = $this->width() + $v->width(), $y = $this->height() + $v->height());
+    }
+
+    function plus($v)
+    {
+        $this->x += $v[0];
+        $this->y += $v[1];
+    }
+
+    function minus(Vector $v)
+    {
+        $this->x -= $v->width();
+        $this->y -= $v->height();
+    }
+
     function normalize()
     {
         $length = $this->length();
         $this->x /= $length;
         $this->y /= $length;
+    }
+
+    function scale($value)
+    {
+        $this->x *= $value;
+        $this->y *= $value;
+        return $this;
     }
 
     function isNormalized()

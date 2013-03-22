@@ -5,6 +5,8 @@ class FuzzySector
     protected
         $vector,
         $minradius,
+        $minradiussquared,
+        $maxradiussquared,
         $maxradius,
         $startangle,
         $endangle;
@@ -12,9 +14,11 @@ class FuzzySector
     {
         $this->vector = $vector;
         $this->minradius = $minradius;
+        $this->minradiussquared = $minradius*$minradius;
         $this->maxradius = $maxradius;
-        $this->startangle = $startangle;
-        $this->endangle = $endangle;
+        $this->maxradiussquared = $maxradius*$maxradius;
+        $this->startangle = Vector::normalizeAngle($startangle);
+        $this->endangle = Vector::normalizeAngle($endangle);
     }
 
     function leftOrEqual($left, $right)
@@ -32,12 +36,18 @@ class FuzzySector
         }
     }
 
-    function has(Vector $coords)
+    function has($coords)
     {
-        $v = Vector::subtract($coords, $this->vector);
-        $length = $v->length();
-        return $this->minradius <= $length && $this->maxradius >= $length && $this->angleWithin($this->startangle,
-                                                                                                $v->angle(),
-                                                                                                $this->endangle);
+        if ($coords instanceof Vector) {
+            $coords = array($coords->width(), $coords->height());
+        }
+        $coords[0] -= $this->vector->width();
+        $coords[1] -= $this->vector->height();
+        $length = $coords[0]*$coords[0] + $coords[1]*$coords[1];
+        $vangle = rad2deg(atan2($coords[1], $coords[0]));
+        $a = $this->minradiussquared <= $length;
+        $b = $this->maxradiussquared >= $length;
+        $c = $this->angleWithin($this->startangle, $vangle, $this->endangle);
+        return $a && $b && $c;
     }
 }

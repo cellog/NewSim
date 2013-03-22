@@ -26,109 +26,73 @@ use ThroughBall\ServerParams as ServerParam;
 class ObjectTable
 {
     const SERVER_EPS = 1.0e-10;
-    protected $landmarks = array();
-    protected $staticitems = array();
-    protected $dynamicitems = array();
-
-    function __construct()
-    {
-        $this->createLandmarkMap();
-        $this->createTable();
-        $this->cmp = function($a, $b) {return $a[0] == $b[0] ? 0 : ($a[0] < $b[0] ? -1 : 1);};
-    }
-
-    function createLandmarkMap()
-    {
-        ///////////////////////////////////////////////////////////////////////
-        $pitch_half_w   = ServerParam::$params['pitch_half_width'];
-        $pitch_half_l   = ServerParam::$params['pitch_half_length'];
-        $penalty_l      = ServerParam::$params['penalty_area_length'];
-        $penalty_half_w = ServerParam::$params['penalty_area_half_width'];
-        $goal_half_w    = ServerParam::$params['goal_half_width'];
-        ///////////////////////////////////////////////////////////////////////
-    
-        self::$landmarks['(g l)']    = new Vector( -$pitch_half_l,   0.0 );
-        self::$landmarks['(g r)']    = new Vector( +$pitch_half_l,   0.0 );
-    
-        self::$landmarks['(f c)']    = new Vector(           0.0,           0.0 );
-        self::$landmarks['(f c t)']   = new Vector(           0.0, -$pitch_half_w );
-        self::$landmarks['(f c b)']   = new Vector(           0.0, +$pitch_half_w );
-        self::$landmarks['(f l t)']   = new Vector( -$pitch_half_l, -$pitch_half_w );
-        self::$landmarks['(f l b)']   = new Vector( -$pitch_half_l, +$pitch_half_w );
-        self::$landmarks['(f r t)']   = new Vector( +$pitch_half_l, -$pitch_half_w );
-        self::$landmarks['(f r b)']   = new Vector( +$pitch_half_l, +$pitch_half_w );
-    
-        self::$landmarks['(f p l t)']  = new Vector( -($pitch_half_l - $penalty_l), -$penalty_half_w );
-        self::$landmarks['(f p l c)']  = new Vector( -($pitch_half_l - $penalty_l),             0.0 );
-        self::$landmarks['(f p l b)']  = new Vector( -($pitch_half_l - $penalty_l), +$penalty_half_w );
-        self::$landmarks['(f p r t)']  = new Vector( +($pitch_half_l - $penalty_l), -$penalty_half_w );
-        self::$landmarks['(f p r c)']  = new Vector( +($pitch_half_l - $penalty_l),             0.0 );
-        self::$landmarks['(f p r b)']  = new Vector( +($pitch_half_l - $penalty_l), +$penalty_half_w );
-    
-        self::$landmarks['(f g l t)']  = new Vector( -$pitch_half_l, -$goal_half_w );
-        self::$landmarks['(f g l b )']  = new Vector( -$pitch_half_l, +$goal_half_w );
-        self::$landmarks['(f g r t)']  = new Vector( +$pitch_half_l, -$goal_half_w );
-        self::$landmarks['(f g r b)']  = new Vector( +$pitch_half_l, +$goal_half_w );
-    
-        self::$landmarks['(f t l 50)'] = new Vector( -50.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 40)'] = new Vector( -40.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 30)'] = new Vector( -30.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 20)'] = new Vector( -20.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 10)'] = new Vector( -10.0, -$pitch_half_w - 5.0 );
-    
-        self::$landmarks['(f t 0)']   = new Vector(  0.0, -$pitch_half_w - 5.0 );
-    
-        self::$landmarks['(f t l 10)'] = new Vector( +10.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 20)'] = new Vector( +20.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 30)'] = new Vector( +30.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 40)'] = new Vector( +40.0, -$pitch_half_w - 5.0 );
-        self::$landmarks['(f t l 50)'] = new Vector( +50.0, -$pitch_half_w - 5.0 );
-    
-        self::$landmarks['(f b l 50)'] = new Vector( -50.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b l 40)'] = new Vector( -40.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b l 30)'] = new Vector( -30.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b l 20)'] = new Vector( -20.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b l 10)'] = new Vector( -10.0,  $pitch_half_w + 5.0 );
-    
-        self::$landmarks['(f b 0)']   = new Vector(   0.0,  $pitch_half_w + 5.0);
-    
-        self::$landmarks['(f b r 10)'] = new Vector( +10.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b r 20)'] = new Vector( +20.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b r 30)'] = new Vector( +30.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b r 40)'] = new Vector( +40.0,  $pitch_half_w + 5.0 );
-        self::$landmarks['(f b r 50)'] = new Vector( +50.0,  $pitch_half_w + 5.0 );
-    
-        self::$landmarks['(f l t 30)'] = new Vector( -$pitch_half_l - 5.0, -30.0 );
-        self::$landmarks['(f l t 20)'] = new Vector( -$pitch_half_l - 5.0, -20.0 );
-        self::$landmarks['(f l t 10)'] = new Vector( -$pitch_half_l - 5.0, -10.0 );
-    
-        self::$landmarks['(f l 0)']   = new Vector( -$pitch_half_l - 5.0,   0.0 );
-    
-        self::$landmarks['(f l b 10)'] = new Vector( -$pitch_half_l - 5.0,  10.0 );
-        self::$landmarks['(f l b 20)'] = new Vector( -$pitch_half_l - 5.0,  20.0 );
-        self::$landmarks['(f l b 30)'] = new Vector( -$pitch_half_l - 5.0,  30.0 );
-    
-        self::$landmarks['(f r t 30)'] = new Vector( +$pitch_half_l + 5.0, -30.0 );
-        self::$landmarks['(f r t 20)'] = new Vector( +$pitch_half_l + 5.0, -20.0 );
-        self::$landmarks['(f r t 10)'] = new Vector( +$pitch_half_l + 5.0, -10.0 );
-    
-        self::$landmarks['(f r 0)']   = new Vector( +$pitch_half_l + 5.0,   0.0 );
-    
-        self::$landmarks['(f r b 10)'] = new Vector( +$pitch_half_l + 5.0,  10.0 );
-        self::$landmarks['(f r b 20)'] = new Vector( +$pitch_half_l + 5.0,  20.0 );
-        self::$landmarks['(f r b 30)'] = new Vector( +$pitch_half_l + 5.0,  30.0 );
-    }
-    
-    function createTable($static_qstep = null, $movable_qstep = null)
-    {
-        if (null !== $static_qstep && null !== $movable_qstep) {
-            $this->createTable2( $static_qstep, 'staticitems' );
-            $this->createTable( $movable_qstep, 'dynamicitems' );
-            return;
-        }
-        $this->staticitems = $this->dynamicitems = array();
-
-        $this->staticitems = array(
+    static $landmarks = array();
+    protected $staticitems = array(
+        array(0.00, 0.026170, 0.026170),
+        array(0.10, 0.104789, 0.052450),
+        array(0.20, 0.208239, 0.051002),
+        array(0.30, 0.304589, 0.045349),
+        array(0.40, 0.411152, 0.061215),
+        array(0.50, 0.524658, 0.052292),
+        array(0.60, 0.607289, 0.030340),
+        array(0.70, 0.708214, 0.070587),
+        array(0.80, 0.819754, 0.040954),
+        array(0.90, 0.905969, 0.045262),
+        array(1.00, 1.001251, 0.050021),
+        array(1.10, 1.106553, 0.055282),
+        array(1.20, 1.222930, 0.061096),
+        array(1.30, 1.351546, 0.067521),
+        array(1.50, 1.493690, 0.074623),
+        array(1.60, 1.650783, 0.082471),
+        array(1.80, 1.824397, 0.091144),
+        array(2.00, 2.016270, 0.100731),
+        array(2.20, 2.228323, 0.111324),
+        array(2.50, 2.462678, 0.123032),
+        array(2.70, 2.721681, 0.135972),
+        array(3.00, 3.007922, 0.150271),
+        array(3.30, 3.324268, 0.166076),
+        array(3.70, 3.673884, 0.183542),
+        array(4.10, 4.060270, 0.202845),
+        array(4.50, 4.487293, 0.224179),
+        array(5.00, 4.959225, 0.247755),
+        array(5.50, 5.480791, 0.273812),
+        array(6.00, 6.057211, 0.302609),
+        array(6.70, 6.694254, 0.334435),
+        array(7.40, 7.398295, 0.369608),
+        array(8.20, 8.176380, 0.408479),
+        array(9.00, 9.036297, 0.451439),
+        array(10.00, 9.986652, 0.498917),
+        array(11.00, 11.036958, 0.551389),
+        array(12.20, 12.197725, 0.609379),
+        array(13.50, 13.480571, 0.673468),
+        array(14.90, 14.898335, 0.744297),
+        array(16.40, 16.465206, 0.822576),
+        array(18.20, 18.196867, 0.909087),
+        array(20.10, 20.110649, 1.004696),
+        array(22.20, 22.225705, 1.110361),
+        array(24.50, 24.563202, 1.227138),
+        array(27.10, 27.146537, 1.356198),
+        array(30.00, 30.001563, 1.498830),
+        array(33.10, 33.156855, 1.656463),
+        array(36.60, 36.643992, 1.830675),
+        array(40.40, 40.497874, 2.023208),
+        array(44.70, 44.757073, 2.235991),
+        array(49.40, 49.464215, 2.471152),
+        array(54.60, 54.666412, 2.731046),
+        array(60.30, 60.415729, 3.018272),
+        array(66.70, 66.769706, 3.335706),
+        array(73.70, 73.791938, 3.686526),
+        array(81.50, 81.552704, 4.074241),
+        array(90.00, 90.129676, 4.502732),
+        array(99.50, 99.608697, 4.976289),
+        array(109.90, 110.084635, 5.499650),
+        array(121.50, 121.662337, 6.078053),
+        array(134.30, 134.457677, 6.717287),
+        array(148.40, 148.598714, 7.423750),
+        array(164.00, 163.226977, 8.204513),
+        array(181.30, 181.498879, 9.067389),
+        );
+    protected $dynamicitems = array(
         array(0.00, 0.025019, 0.025019),
         array(0.10, 0.100178, 0.050142),
         array(0.20, 0.200321, 0.050003),
@@ -520,76 +484,100 @@ class ObjectTable
         array(177.70, 177.685032, 0.888418),
         array(179.50, 179.470796, 0.897347),
         );
+
+    function __construct()
+    {
+        $this->createLandmarkMap();
+    }
+
+    function createLandmarkMap()
+    {
+        static $done = 0;
+        if ($done++) return;
+        ///////////////////////////////////////////////////////////////////////
+        $pitch_half_w   = ServerParam::$params['pitch_half_width'];
+        $pitch_half_l   = ServerParam::$params['pitch_half_length'];
+        $penalty_l      = ServerParam::$params['penalty_area_length'];
+        $penalty_half_w = ServerParam::$params['penalty_area_half_width'];
+        $goal_half_w    = ServerParam::$params['goal_half_width'];
+        ///////////////////////////////////////////////////////////////////////
     
+        self::$landmarks['(g l)']    = new Vector( -$pitch_half_l,   0.0 );
+        self::$landmarks['(g r)']    = new Vector( +$pitch_half_l,   0.0 );
     
-        $this->dynamicitems = array(
-        array(0.00, 0.026170, 0.026170),
-        array(0.10, 0.104789, 0.052450),
-        array(0.20, 0.208239, 0.051002),
-        array(0.30, 0.304589, 0.045349),
-        array(0.40, 0.411152, 0.061215),
-        array(0.50, 0.524658, 0.052292),
-        array(0.60, 0.607289, 0.030340),
-        array(0.70, 0.708214, 0.070587),
-        array(0.80, 0.819754, 0.040954),
-        array(0.90, 0.905969, 0.045262),
-        array(1.00, 1.001251, 0.050021),
-        array(1.10, 1.106553, 0.055282),
-        array(1.20, 1.222930, 0.061096),
-        array(1.30, 1.351546, 0.067521),
-        array(1.50, 1.493690, 0.074623),
-        array(1.60, 1.650783, 0.082471),
-        array(1.80, 1.824397, 0.091144),
-        array(2.00, 2.016270, 0.100731),
-        array(2.20, 2.228323, 0.111324),
-        array(2.50, 2.462678, 0.123032),
-        array(2.70, 2.721681, 0.135972),
-        array(3.00, 3.007922, 0.150271),
-        array(3.30, 3.324268, 0.166076),
-        array(3.70, 3.673884, 0.183542),
-        array(4.10, 4.060270, 0.202845),
-        array(4.50, 4.487293, 0.224179),
-        array(5.00, 4.959225, 0.247755),
-        array(5.50, 5.480791, 0.273812),
-        array(6.00, 6.057211, 0.302609),
-        array(6.70, 6.694254, 0.334435),
-        array(7.40, 7.398295, 0.369608),
-        array(8.20, 8.176380, 0.408479),
-        array(9.00, 9.036297, 0.451439),
-        array(10.00, 9.986652, 0.498917),
-        array(11.00, 11.036958, 0.551389),
-        array(12.20, 12.197725, 0.609379),
-        array(13.50, 13.480571, 0.673468),
-        array(14.90, 14.898335, 0.744297),
-        array(16.40, 16.465206, 0.822576),
-        array(18.20, 18.196867, 0.909087),
-        array(20.10, 20.110649, 1.004696),
-        array(22.20, 22.225705, 1.110361),
-        array(24.50, 24.563202, 1.227138),
-        array(27.10, 27.146537, 1.356198),
-        array(30.00, 30.001563, 1.498830),
-        array(33.10, 33.156855, 1.656463),
-        array(36.60, 36.643992, 1.830675),
-        array(40.40, 40.497874, 2.023208),
-        array(44.70, 44.757073, 2.235991),
-        array(49.40, 49.464215, 2.471152),
-        array(54.60, 54.666412, 2.731046),
-        array(60.30, 60.415729, 3.018272),
-        array(66.70, 66.769706, 3.335706),
-        array(73.70, 73.791938, 3.686526),
-        array(81.50, 81.552704, 4.074241),
-        array(90.00, 90.129676, 4.502732),
-        array(99.50, 99.608697, 4.976289),
-        array(109.90, 110.084635, 5.499650),
-        array(121.50, 121.662337, 6.078053),
-        array(134.30, 134.457677, 6.717287),
-        array(148.40, 148.598714, 7.423750),
-        array(164.00, 163.226977, 8.204513),
-        array(181.30, 181.498879, 9.067389),
-        );
+        self::$landmarks['(f c)']    = new Vector(           0.0,           0.0 );
+        self::$landmarks['(f c t)']   = new Vector(           0.0, -$pitch_half_w );
+        self::$landmarks['(f c b)']   = new Vector(           0.0, +$pitch_half_w );
+        self::$landmarks['(f l t)']   = new Vector( -$pitch_half_l, -$pitch_half_w );
+        self::$landmarks['(f l b)']   = new Vector( -$pitch_half_l, +$pitch_half_w );
+        self::$landmarks['(f r t)']   = new Vector( +$pitch_half_l, -$pitch_half_w );
+        self::$landmarks['(f r b)']   = new Vector( +$pitch_half_l, +$pitch_half_w );
     
-        // sort(M_static_table.begin(), M_static_table.end( ) );
-        // sort(M_movable_table.begin(), M_dunamic_table.end( ) );
+        self::$landmarks['(f p l t)']  = new Vector( -($pitch_half_l - $penalty_l), -$penalty_half_w );
+        self::$landmarks['(f p l c)']  = new Vector( -($pitch_half_l - $penalty_l),             0.0 );
+        self::$landmarks['(f p l b)']  = new Vector( -($pitch_half_l - $penalty_l), +$penalty_half_w );
+        self::$landmarks['(f p r t)']  = new Vector( +($pitch_half_l - $penalty_l), -$penalty_half_w );
+        self::$landmarks['(f p r c)']  = new Vector( +($pitch_half_l - $penalty_l),             0.0 );
+        self::$landmarks['(f p r b)']  = new Vector( +($pitch_half_l - $penalty_l), +$penalty_half_w );
+    
+        self::$landmarks['(f g l t)']  = new Vector( -$pitch_half_l, -$goal_half_w );
+        self::$landmarks['(f g l b )']  = new Vector( -$pitch_half_l, +$goal_half_w );
+        self::$landmarks['(f g r t)']  = new Vector( +$pitch_half_l, -$goal_half_w );
+        self::$landmarks['(f g r b)']  = new Vector( +$pitch_half_l, +$goal_half_w );
+    
+        self::$landmarks['(f t l 50)'] = new Vector( -50.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 40)'] = new Vector( -40.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 30)'] = new Vector( -30.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 20)'] = new Vector( -20.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 10)'] = new Vector( -10.0, -$pitch_half_w - 5.0 );
+    
+        self::$landmarks['(f t 0)']   = new Vector(  0.0, -$pitch_half_w - 5.0 );
+    
+        self::$landmarks['(f t l 10)'] = new Vector( +10.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 20)'] = new Vector( +20.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 30)'] = new Vector( +30.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 40)'] = new Vector( +40.0, -$pitch_half_w - 5.0 );
+        self::$landmarks['(f t l 50)'] = new Vector( +50.0, -$pitch_half_w - 5.0 );
+    
+        self::$landmarks['(f b l 50)'] = new Vector( -50.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b l 40)'] = new Vector( -40.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b l 30)'] = new Vector( -30.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b l 20)'] = new Vector( -20.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b l 10)'] = new Vector( -10.0,  $pitch_half_w + 5.0 );
+    
+        self::$landmarks['(f b 0)']   = new Vector(   0.0,  $pitch_half_w + 5.0);
+    
+        self::$landmarks['(f b r 10)'] = new Vector( +10.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b r 20)'] = new Vector( +20.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b r 30)'] = new Vector( +30.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b r 40)'] = new Vector( +40.0,  $pitch_half_w + 5.0 );
+        self::$landmarks['(f b r 50)'] = new Vector( +50.0,  $pitch_half_w + 5.0 );
+    
+        self::$landmarks['(f l t 30)'] = new Vector( -$pitch_half_l - 5.0, -30.0 );
+        self::$landmarks['(f l t 20)'] = new Vector( -$pitch_half_l - 5.0, -20.0 );
+        self::$landmarks['(f l t 10)'] = new Vector( -$pitch_half_l - 5.0, -10.0 );
+    
+        self::$landmarks['(f l 0)']   = new Vector( -$pitch_half_l - 5.0,   0.0 );
+    
+        self::$landmarks['(f l b 10)'] = new Vector( -$pitch_half_l - 5.0,  10.0 );
+        self::$landmarks['(f l b 20)'] = new Vector( -$pitch_half_l - 5.0,  20.0 );
+        self::$landmarks['(f l b 30)'] = new Vector( -$pitch_half_l - 5.0,  30.0 );
+    
+        self::$landmarks['(f r t 30)'] = new Vector( +$pitch_half_l + 5.0, -30.0 );
+        self::$landmarks['(f r t 20)'] = new Vector( +$pitch_half_l + 5.0, -20.0 );
+        self::$landmarks['(f r t 10)'] = new Vector( +$pitch_half_l + 5.0, -10.0 );
+    
+        self::$landmarks['(f r 0)']   = new Vector( +$pitch_half_l + 5.0,   0.0 );
+    
+        self::$landmarks['(f r b 10)'] = new Vector( +$pitch_half_l + 5.0,  10.0 );
+        self::$landmarks['(f r b 20)'] = new Vector( +$pitch_half_l + 5.0,  20.0 );
+        self::$landmarks['(f r b 30)'] = new Vector( +$pitch_half_l + 5.0,  30.0 );
+    }
+    
+    function createTable($static_qstep, $movable_qstep)
+    {
+        $this->createTable2( $static_qstep, 'staticitems' );
+        $this->createTable2( $movable_qstep, 'dynamicitems' );
     }
 
     function getStaticObjInfo( $see_dist,

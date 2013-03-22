@@ -95,6 +95,7 @@ class Player extends UDP
         $this->bodyparser = new SenseBodyParser($this->debug);
         $this->see = new See;
         $this->sensebody = new SenseBody;
+        $this->coordinates = new Util\Vector(0,0);
     }
 
     function getInitString()
@@ -138,6 +139,7 @@ class Player extends UDP
                 $this->playmode = $params['playmode'];
             } elseif ($tag instanceof ServerParams) {
                 $this->serverparams = $tag;
+                new Util\ObjectTable;
             } elseif ($tag instanceof PlayerParams) {
                 $this->playerparams = $tag;
             } elseif ($tag instanceof \Exception) {
@@ -181,8 +183,6 @@ class Player extends UDP
             echo "see ", $this->unum, "\n";
         }
         $this->see = $see;
-        // cache current coordinates and direction
-        $this->coordinates = $this->getCoordinates();
         // check for lines
         $closestline = false;
         foreach (array('(l t)', '(l r)', '(l b)', '(l l)') as $line) {
@@ -201,6 +201,7 @@ class Player extends UDP
         if ($closestline) {
             $vector = new Util\LineVector($closestline['distance'], $closestline['direction'], $linename);
             $this->bodydirection = $vector->angle();
+            // cache current coordinates and direction
             return; // easy peasy
         }
         // hard way
@@ -215,7 +216,10 @@ class Player extends UDP
             $landmarks[] = $this->knownLocations[$param];
             if (++$i == 2) break;
         }
-        if ($i != 2) return; // fail
+        if ($i != 2) {
+            // cache current coordinates and direction
+            return; // fail
+        }
 
         $vector1 = new Util\PolarVector($bodydirections[0]['distance'], $bodydirections[0]['direction']);
         $vector2 = new Util\PolarVector($bodydirections[1]['distance'], $bodydirections[1]['direction']);
@@ -225,6 +229,7 @@ class Player extends UDP
         $separation = Util\Vector::subtract($vector1, $vector2);
         $landmarkseparation = Util\Vector::subtract($landmark1, $landmark2);
         $this->bodydirection = $landmarkseparation->angle() - $separation->angle();
+        // cache current coordinates and direction
     }
 
     function handleHear($hear)
@@ -263,110 +268,25 @@ class Player extends UDP
 
     function getCoordinates()
     {
-        $params = $this->see->listSeenItems();
+        $params = $this->see->sortedSeenFlags();
         if (!count($params)) {
+            if (!$this->coordinates) {
+                $this->coordinates = new Util\Vector(0,0);
+            }
             return false;
         }
+        list($flag, $closest) = each($params);
 
-        // check for flags
-        $found = array();
-        $far = array();
-        $near = array();
-        foreach ($params as $param) {
-            if (isset($this->knownLocations[$param])) {
-                $seen = $this->see->getItem($param);
-                $found[$param] = array($seen,
-                                       $this->toAbsoluteCoordinates($this->knownLocations[$param]));
-                if ($seen['distance'] < 11) {
-                    // this is 100% accurate, basically
-                    $far = array();
-                    $near = array($param => $found[$param]);
-                    break;
-                }
-                if ($seen['distance'] < 20) {
-                    // these will be more accurate
-                    $near[$param] = $found[$param];
-                    if (count($near) >= 2) {
-                        // this is enough for certainty
-                        $far = array();
-                        break;
-                    }
-                } else {
-                    $far[$param] = $found[$param];
-                }
-            }
+        $error = 0.5;
+        $this->see->generateSeenPoints($closest, $flag, $this->bodydirection, $error);
+        if (!$this->see->hasPoints()) {
+            return false;
         }
-        $calcx = array();
-        $calcy = array();
-        $results = array();
-        foreach (array('near' => $near, 'far' => $far) as $name => $found) {
-            if (!count($found)) {
-                continue;
-            }
-            foreach ($found as $param => $info) {
-                // solve the right triangle to determine cartesian distance to the object
-                // first calculate the other angle
-                $A = $info[0]['direction'];
-                if (!$A) {
-                    // we are level with this landmark
-                    $calcx[] = $info[1][0] - $info[0]['distance'];
-                    $calcy[] = $info[1][1];
-                    continue;
-                }
-                if ($A < 0) {
-                    $A = 0 - $A; // make it positive
-                    $negateY = true;
-                    if ($A < 90) {
-                        $negateX = true;
-                    } else {
-                        $negateX = false;
-                    }
-                } else {
-                    $negateY = false;
-                    if ($A < 90) {
-                        $negateX = true;
-                    } else {
-                        $negateX = false;
-                    }
-                }
-                $B = 90;
-                $C = 90 - $A; // angles must add up to 180 in a triangle
-    
-                // next use the law of sines a/sin A = b/sin B = c/sin C
-                // sin of 90 is 1 so b/sin B = distance/1 = distance (convenient!)
-                // so a/sin A = b, a = bsinA = distance*sin A
-                $b = $info[0]['distance'];
-                $a = $info[0]['distance']*sin(deg2rad($A));
-                $c = $info[0]['distance']*sin(deg2rad($C));
-                if ($negateY) {
-                    $a = -$a;
-                }
-                if ($negateX) {
-                    $b = -$b;
-                }
-                $calcy[] = $info[1][1] + $a;
-                $calcx[] = $info[1][0] + $b;
-            }
-            // now to help eliminate the random error, average everything
-            if (count($calcx)) {
-                $x = array_sum($calcx)/count($calcx);
-            }
-            if (count($calcy)) {
-                $y = array_sum($calcy)/count($calcy);
-            }
-            if (count($calcx)) {
-                $results[$name] = array($x, $y);
-            }
-        }
-        if (isset($results['near']) && !isset($results['far'])) {
-            return $results['near'];
-        }
-        if (!isset($results['near'])) {
-            return $results['far'];
-        }
-        // bias towards near results
-        return $this->toRelativeCoordinates(array(.7 * $results['near'][0] + .3 * $results['far'][0],
-                     .7 * $results['near'][1] + .3 * $results['far'][1]));
+        $this->error = new Util\Vector(0, 0);
+        $this->coordinates = new Util\Vector(0, 0);
+
+        $this->see->updatePointsByFlags($params, $this->bodydirection, $error);
+        $this->see->averagePoints($this->coordinates, $this->error);
     }
 
     function opponentGoal()
@@ -390,6 +310,7 @@ class Player extends UDP
             return;
         }
         $this->queueCommand('(move ' . $x . ' ' . $y . ')');
+        $this->coordinates->assign($x, $y);
     }
 
     function realDirection($angle)
@@ -439,24 +360,22 @@ class Player extends UDP
 
     function getGoalDirection()
     {
-        $self = new Util\Vector($this->coordinates[0], $this->coordinates[1]);
-        $goal = new Util\Vector($this->knownLocations[$this->opponentGoal()][0],
-                                                       $this->knownLocations[$this->opponentGoal()][1]);
-        $goalvector = Util\Vector::subtract($goal,
-                                            $self);
+        $this->getCoordinates();
+        $self = $this->coordinates;
+        $goalvector = clone Util\ObjectTable::$landmarks[$this->opponentGoal()];
+        $goalvector->minus($self);
 
-        echo "self ";$self->dump();
-        echo "goal ";$goal->dump();
-        echo "subtracted ";$goalvector->dump();
-        echo "body dir ",$this->bodydirection, "\n";
+        //echo "self ";$self->dump();
+        //echo "goal ";Util\ObjectTable::$landmarks[$this->opponentGoal()]->dump();
+        //echo "subtracted ";$goalvector->dump();
+        //echo "body dir ",$this->bodydirection, "\n";
         return $goalvector;
     }
 
     function shoot($direction = null)
     {
         if (!$direction) {
-            $direction = $this->getGoalDirection();
-            $direction = $direction['direction'];
+            $direction = $this->getGoalDirection()->angle();
         }
         $this->kick(100, $direction);
     }
