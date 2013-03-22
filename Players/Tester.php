@@ -21,10 +21,6 @@ class Tester extends Player {
         $ball = $see->getItem('(b)');
         if ($ball) {
             if ($this->isKickable($ball)) {
-                $goal = $this->toAbsoluteCoordinates($this->knownLocations[$this->opponentGoal()]);
-                $dist = $goal[1] - $this->coordinates[1];
-                echo "ball kickable dist ", $dist, ' dir ', $g->angle(), ' body dir ',
-                    $this->bodydirection, "\n";
                 if ($this->cycle - $this->shot < 3) {
                     $this->dash($ball['direction'], 60);
                     return;

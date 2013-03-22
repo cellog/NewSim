@@ -463,7 +463,7 @@ class PlayerParser
         }
         if ($this->token() == a::CLOSEPAREN) {
             $this->popstate(); // return to previous state
-            return;
+            return true; // handle this in the parent
         }
         $param = new namespace\ServerParams;
         $this->replace($param);
@@ -479,7 +479,7 @@ class PlayerParser
         }
         if ($this->token() == a::CLOSEPAREN) {
             $this->popstate(); // return to previous state
-            return;
+            return true; // handle this in the parent
         }
         $param = new namespace\PlayerParams;
         $this->replace($param);
