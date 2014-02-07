@@ -1,7 +1,7 @@
 <?php
 function __autoload($class)
 {
-    include __DIR__ . '/' . substr($class, strrpos($class, '\\')+1) . '.php';
+    include __DIR__ . '/' . str_replace(array('ThroughBall\\', '\\'), array('', '/'), $class) . '.php';
 }
 class Tester extends ThroughBall\Player {
     protected $goaldirection = 0;
